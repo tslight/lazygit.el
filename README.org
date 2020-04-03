@@ -2,4 +2,11 @@
 
 A very basic Emacs client for GitLab and GitHub so far...
 
-Store API keys in ~~/.gitlab.key~ and ~~/.github.key~ respectively.
+Store API keys in ~$HOME/.gitlab.key~ and ~$HOME/.github.key~ respectively.
+
+These locations can be changed like so:
+
+#+begin_src emacs-lisp
+(setq gitlab/api-key-file "/path/to/gitlab.key")
+(setq github/api-key-file "/path/to/github.key")
+#+end_src
