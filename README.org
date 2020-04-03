@@ -91,14 +91,14 @@ If you want both GitHub & GitLab access:
 #+end_src
 ** Screenshots
 
-Results of running ~(github/retriever "user")~ when [[https://github.com/DamienCassou/json-navigator][json-navigator]] is
+Results of running ~(github/retriever "user/torvalds")~ when [[https://github.com/DamienCassou/json-navigator][json-navigator]] is
 installed:
 
 #+CAPTION: Results of github/retriever user
 #+NAME:fig:github/retriever
      [[./img/nav.png]]
 
-Results of running ~(github/retriever "user")~ when [[https://github.com/DamienCassou/json-navigator][json-navigator]] is not
+Results of running ~(github/retriever "user/torvalds")~ when [[https://github.com/DamienCassou/json-navigator][json-navigator]] is not
 installed:
 
 #+CAPTION: Results of github/retriever user
