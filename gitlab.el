@@ -4,6 +4,22 @@
 
 ;; GitLab API client for Emacs.
 
+;; So far I have implemented functions to clone or pull repositories from a
+;; list of repositories available to the authenticated user, with
+;; gitlab/clone-or-pull-repo.
+
+;; If `magit' is installed, this will be used, otherwise we shell out to git,
+;; so obviously, that needs to be installed on your system.
+
+;; You can also clone or pull all repositories in one fail swoop with
+;; gitlab/clone-or-pull-all.  This will not use `magit', unless called with
+;; prefix argument.
+
+;; gitlab/retriever allows arbitrary querying of endpoints.  If
+;; `json-navigator' is installed, the JSON results will be opened in a fancy
+;; tree hiearchy browser.  If not, you can view the JSON results pretty printed
+;; in a dedicated buffer.
+
 ;; Copyright (C) 2020 Toby Slight
 ;; Author: Toby Slight tslight@pm.me
 
