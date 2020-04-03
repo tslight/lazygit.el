@@ -36,6 +36,7 @@
   (url/view-retrieved-json (concat "https://api.github.com/"
                                    endpoint
                                    "?per_page=100&page=1")
+			   "*lazygithub*"
                            ;; https://stackoverflow.com/a/24188208
                            `(("Authorization" . ,(concat "token " (github/token?))))))
 
@@ -67,6 +68,7 @@
              (cdr (assoc 'ssh_url r))))
           repos)))
 
+(defalias 'gh/api 'github/retriever)
 (defalias 'gh/all 'github/clone-or-pull-all)
 (defalias 'gh/repo 'github/clone-or-pull-repo)
 

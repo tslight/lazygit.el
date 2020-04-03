@@ -52,15 +52,12 @@ Optional HEADERS can be specifified."
          (parsed-json (json-read-from-string (flatten-json json))))
     parsed-json))
 
-(defun url/view-retrieved-json (url &optional headers)
-  "View the json retreived from URL, with optional HEADERS.
+(defun url/view-retrieved-json (url buffer &optional headers)
+  "View the json retreived from URL, with optional HEADERS, in BUFFER.
 Results will be pretty printed in a buffer, and if
 `json-navigator' is installed will be viewed opened in that."
-  (let* ((items (url/retrieve-paginated-bodies url headers))
-         (name (replace-regexp-in-string
-                "\\(^https://\\|.com/api/v4\\|?.*\\)" "" url))
-         (name (replace-regexp-in-string "/" "-" name)))
-    (switch-to-buffer (concat "*" name "*"))
+  (let ((items (url/retrieve-paginated-bodies url headers)))
+    (switch-to-buffer buffer)
     (erase-buffer)
     (insert (flatten-json items))
     (json-pretty-print-buffer)

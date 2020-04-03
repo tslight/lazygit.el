@@ -38,6 +38,7 @@
                                    "?pagination=keyset&per_page=100&"
                                    "order_by=id&sort=asc"
                                    "&membership=true")
+			   "*lazygitlab*"
                            ;; https://stackoverflow.com/a/24188208
                            `(("PRIVATE-TOKEN" . ,(gitlab/token?)))))
 
@@ -103,6 +104,7 @@
              (cdr (assoc 'ssh_url_to_repo p))))
           projects)))
 
+(defalias 'gl/api 'gitlab/retriever)
 (defalias 'gl/grp 'gitlab/clone-or-pull-group)
 (defalias 'gl/prj 'gitlab/clone-or-pull-project)
 
