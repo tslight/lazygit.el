@@ -1,0 +1,5 @@
+* SLACK OFF & BE A LAZY GIT
+
+A very basic Emacs client for GitLab and GitHub so far...
+
+Store API keys in ~~/.gitlab.key~ and ~~/.github.key~ respectively.

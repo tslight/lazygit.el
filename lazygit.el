@@ -1,0 +1,139 @@
+;;; lazygit.el --- Git hosting API clients for Emacs
+
+;;; Commentary:
+
+;; So far only GitHub & GitLab are supported.
+
+;; Copyright (C) 2020 Toby Slight
+;; Author: Toby Slight tslight@pm.me
+
+;;; Code:
+
+;; -*- lexical-binding: t; -*-
+(require 'json)
+(require 'package)
+(require 'url)
+(require 'utils (expand-file-name "utils.el"))
+
+(defgroup lazygit/api-keys nil
+  "API keys."
+  :group 'convenience)
+
+(defcustom gitlab/api-key-file "~/.gitlab.key"
+  "File to store GitLab API key in."
+  :group 'lazygit/api-keys
+  :type 'file)
+
+(defcustom gitlab/api-key (read-file gitlab/api-key-file)
+  "GitLab API key."
+  :group 'lazygit/api-keys
+  :type 'string)
+
+(defcustom github/api-key-file "~/.github.key"
+  "File to store GitHub API key in."
+  :group 'lazygit/api-keys
+  :type 'file)
+
+(defcustom github/api-key (read-file github/api-key-file)
+  "GitHub API key."
+  :group 'lazygit/api-keys
+  :type 'string)
+
+(defun url/link-to-next-page ()
+  "Return a link to the next page of results.
+Assumes typical keyset based pagination return headers."
+  (goto-char (point-min))
+  (let ((begin (re-search-forward "Link.*: <" nil t))
+        (end (re-search-forward ">; rel=\"next\"" nil t)))
+    (if (and begin end)
+        (buffer-substring-no-properties begin (- end 13))
+      nil)))
+
+(defun url/retrieve-paginated-bodies (url &optional headers items)
+  "Return all ITEMS from URL, with optional HEADERS.
+Supports key-based pagination - ie) if returned headers have a
+link to the next page."
+  (set-buffer
+   (let ((url-request-method "GET")
+         (url-request-extra-headers headers))
+     (url-retrieve-synchronously url)))
+  (let ((next-page (url/link-to-next-page)))
+    (delete-region (point-min) url-http-end-of-headers)
+    (let* ((retrieved-items (cons (buffer-string) items)))
+      (if next-page
+          (url/retrieve-paginated-bodies next-page headers retrieved-items)
+        retrieved-items))))
+
+(defun url/parse-retrieved-json (url &optional headers)
+  "Return alists from JSON bodies retrieved from URL.
+Optional HEADERS can be specifified."
+  (let* ((json (url/retrieve-paginated-bodies url headers))
+         (json-array-type 'list)
+         (parsed-json (json-read-from-string (flatten-json json))))
+    parsed-json))
+
+(defun url/view-retrieved-json (url &optional headers)
+  "View the json retreived from URL, with optional HEADERS.
+Results will be pretty printed in a buffer, and if
+`json-navigator' is installed will be viewed opened in that."
+  (let* ((items (url/retrieve-paginated-bodies url headers))
+         (name (replace-regexp-in-string
+                "\\(^https://\\|.com/api/v4\\|?.*\\)" "" url))
+         (name (replace-regexp-in-string "/" "-" name)))
+    (switch-to-buffer (concat "*" name "*"))
+    (erase-buffer)
+    (insert (flatten-json items))
+    (json-pretty-print-buffer)
+    (goto-char (point-min))
+    (if (package-installed-p 'json-navigator)
+        (progn (json-navigator-navigate-after-point)
+               (execute-kbd-macro (kbd "<return>"))))))
+
+(defun url/get-values (url keys &optional headers)
+  "Retrieve values from KEYS from a list of URL json objects."
+  (let ((response (url/parse-retrieved-json url headers)))
+    (filter-keys response keys)))
+
+(defun git/repo? (directory)
+  "Return non-nil if there is a git repo in DIRECTORY."
+  (and
+   (file-directory-p (concat directory "/.git"))
+   (file-directory-p (concat directory "/.git/info"))
+   (file-directory-p (concat directory "/.git/objects"))
+   (file-directory-p (concat directory "/.git/refs"))
+   (file-regular-p (concat directory "/.git/HEAD"))))
+
+(defun git/clone-or-pull (directory url &optional with-magit)
+  "Clone or pull a git repo from URL to DIRECTORY.
+If WITH-MAGIT is true and `magit' is installed, use that instead
+of shelling out to git."
+  (if (git/repo? directory)
+      (if (and with-magit (package-installed-p 'magit))
+          (progn
+            (message
+             (concat directory ": "
+                     (string-trim
+                      (shell-command-to-string
+                       (concat "git -C " directory " pull")))))
+            (magit-status-setup-buffer directory))
+        (display-async-shell-command-buffer
+         (concat "git -C " directory " pull --quiet") "*lazygit*" t))
+    (progn
+      (if (and with-magit (package-installed-p 'magit))
+          (magit-clone-regular url directory nil)
+        (display-async-shell-command-buffer
+         (concat "git clone --quiet " url " " directory) "*lazygit*" t)))))
+
+(defun git/clone-or-pull-repo (repos path name url directory)
+  "Prompt for a repo from REPOS, then clone that repo to DIRECTORY.
+Using PATH, NAME & URL."
+  (let* ((paths (mapcar (lambda (r) (cdr (assoc path r))) repos))
+         (choice (completing-read "Repo to clone: " paths))
+         (repo (get-assoc-list repos path choice))
+         (cloneurl (cdr (assoc url repo)))
+         (reponame (cdr (assoc name repo)))
+         (dest (concat directory reponame)))
+    (git/clone-or-pull dest cloneurl t)))
+
+(provide 'lazygit)
+;;; lazygit.el ends here
