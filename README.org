@@ -92,14 +92,14 @@ If you want both GitHub & GitLab access:
 ** Screenshots
 
 Results of running ~(github/retriever "user")~ when [[https://github.com/DamienCassou/json-navigator][json-navigator]] is
-installed.
+installed:
 
 #+CAPTION: Results of github/retriever user
 #+NAME:fig:github/retriever
      [[./img/nav.png]]
 
 Results of running ~(github/retriever "user")~ when [[https://github.com/DamienCassou/json-navigator][json-navigator]] is not
-installed.
+installed:
 
 #+CAPTION: Results of github/retriever user
 #+NAME:fig:github/retriever
