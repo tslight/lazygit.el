@@ -12,14 +12,14 @@
 ;; -*- lexical-binding: t; -*-
 (require 'lazygit)
 
-(defcustom gitlab/token-file (concat user-emacs-directory ".gitlab.key")
-  "File to store GitLab API key in."
+(defcustom gitlab/token-file (concat user-emacs-directory ".gitlab.token")
+  "File to store GitLab API Personal Access Token in."
   :group 'lazygit/tokens
   :type 'file)
 
 (defun gitlab/install-token (token)
   "Prompt for GitLab TOKEN and write it to `gitlab/token-file'."
-  (interactive "sEnter your GitLab API key: ")
+  (interactive "sEnter your GitLab Personal Access Token: ")
   (write-region token nil gitlab/token-file)
   token)
 
@@ -32,7 +32,7 @@
 
 (defun gitlab/retriever (endpoint)
   "Retrieve resources from GitLab ENDPOINT."
-  (interactive "sEnter an endpoint: ")
+  (interactive "sEnter GitLab API endpoint: ")
   (url/view-retrieved-json (concat "https://gitlab.com/api/v4/"
                                    endpoint
                                    "?pagination=keyset&per_page=100&"

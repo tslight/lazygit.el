@@ -12,14 +12,14 @@
 ;; -*- lexical-binding: t; -*-
 (require 'lazygit)
 
-(defcustom github/token-file (concat user-emacs-directory ".github.key")
-  "File to store GitHub API key in."
+(defcustom github/token-file (concat user-emacs-directory ".github.token")
+  "File to store GitHub Personal Access Token in."
   :group 'lazygit/tokens
   :type 'file)
 
 (defun github/install-token (token)
   "Prompt for GitHub TOKEN and write it to `github/token-file'."
-  (interactive "sEnter your GitHub API key: ")
+  (interactive "sEnter your GitHub Personal Access Token: ")
   (write-region token nil github/token-file)
   token)
 
@@ -32,7 +32,7 @@
 
 (defun github/retriever (endpoint)
   "Retrieve resources from GitHub ENDPOINT."
-  (interactive "sEnter an endpoint: ")
+  (interactive "sEnter a GitHub API endpoint: ")
   (url/view-retrieved-json (concat "https://api.github.com/"
                                    endpoint
                                    "?per_page=100&page=1")

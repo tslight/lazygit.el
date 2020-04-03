@@ -1,41 +1,95 @@
 * Git Hosting API Clients for Emacs
 
-A very basic Emacs client for GitLab and GitHub so far...
+A very basic Emacs client for GitLab and GitHub...
 
 Get slack - be a lazy git!
 
-** Example Use Package Configuration
+** Overview
+
+So far I have implemented functions to clone or pull repositories from a list
+of repositories available to the authenticated user, with
+~gitlab/clone-or-pull-repo~ or ~github/clone-or-pull-repo~.
+
+If [[https://magit.vc/][Magit]] is installed, this will be used, otherwise we shell out to ~git~, so
+obviously, that needs to be installed on your system.
+
+For GitLab you can also clone or pull all the repositories under a given group
+with ~gitlab/clone-or-pull-group~. This will not use [[https://magit.vc/][Magit]], unless called with
+prefix argument..
+
+For GitHub you can clone or pull all repositories in one fail swoop with
+~github/clone-or-pull-all~. This will not use [[https://magit.vc/][Magit]], unless called with prefix
+argument.
+
+~gitlab/retriever~ and ~github/retriever~ allow arbitrary querying of
+endpoints. If [[https://github.com/DamienCassou/json-navigator][json-navigator]] is installed, the JSON results will be opened in a
+fancy tree hiearchy browser. If not you can view the JSON results pretty
+printed in a dedicated buffer.
+
+** Authentication
+
+You will be asked to enter your /Personal Access Token/ the first time you run
+a command.
+
+Generate a *GitHub* /Personal Access Token/ [[https://github.com/settings/tokens][here]].
+
+Generate a *GitLab* /Personal Access Token/ [[https://gitlab.com/profile/personal_access_tokens][here]].
+
+By default these tokens will be stored in ~$HOME/.emacs.d/.gitlab.token~ and
+~$HOME/.emacs.d/.github.token~, however these locations can be customised with
+~customize~ or ~setq~.
+
+** Configuration
+
+If you just want GitHub access:
 
 #+begin_src emacs-lisp
-(use-package lazygit
-  :load-path "~/src/gitlab/tspub/lisp/lazygit")
-
-(use-package gitlab
-  :after lazygit
-  :bind
-  ("C-c C-g l c" . gitlab/clone-or-pull-project)
-  ("C-c C-g l g" . gitlab/clone-or-pull-group)
-  ("C-c C-g l r" . gitlab/retriever)
-  :config
-  (setq gitlab/token-file "~/.gitlab.key"))
-
-(use-package github
-  :after lazygit
-  :bind
-  ("C-c C-g h a" . github/clone-or-pull-all)
-  ("C-c C-g h c" . github/clone-or-pull-repo)
-  ("C-c C-g h r" . github/retriever)
-  :config
-  (setq github/token-file "~/.github.key"))
+  (add-to-list 'load-path "/path/to/where/you/cloned/this/repo")
+  (require 'github)
+  ;; optionally change the default personal access token location
+  (setq github/token-file "~/.github.key")
 #+end_src
 
-** If you're not using Use Package...
+If you just want GitLab access:
 
-...shame on you.
+#+begin_src emacs-lisp
+  (add-to-list 'load-path "/path/to/where/you/cloned/this/repo")
+  (require 'gitlab)
+  ;; optionally change the default personal access token location
+  (setq gitlab/token-file "~/.gitlab.key")
+#+end_src
+
+If you want both GitHub & GitLab access:
 
 #+begin_src emacs-lisp
   (add-to-list 'load-path "/path/to/where/you/cloned/this/repo")
   (require 'lazygit)
+  ;; optionally change the default personal access tokens locations
   (setq gitlab/token-file "~/.gitlab.key")
   (setq github/token-file "~/.github.key")
+#+end_src
+
+*** Use Package
+
+#+begin_src emacs-lisp
+  (use-package lazygit
+    :load-path "~/src/gitlab/tspub/lisp/lazygit")
+
+  (use-package gitlab
+    :after lazygit
+    :bind
+    ("C-c C-g l c" . gitlab/clone-or-pull-project)
+    ("C-c C-g l g" . gitlab/clone-or-pull-group)
+    ("C-c C-g l r" . gitlab/retriever)
+    :config
+    (setq gitlab/token-file "~/.gitlab.key"))
+
+  (use-package github
+    :after lazygit
+    :bind
+    ("C-c C-g h a" . github/clone-or-pull-all)
+    ("C-c C-g h c" . github/clone-or-pull-repo)
+    ("C-c C-g h r" . github/retriever)
+    :config
+    (setq github/token-file "~/.github.key"))
 #+end_src
