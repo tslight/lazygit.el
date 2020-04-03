@@ -10,7 +10,7 @@
 ;;; Code:
 
 ;; -*- lexical-binding: t; -*-
-(require 'lazygit (expand-file-name "lazygit.el"))
+(require 'lazygit)
 
 (defun github/retriever (endpoint)
   "Retrieve resources from GitHub ENDPOINT."
@@ -49,8 +49,8 @@
              (cdr (assoc 'ssh_url r))))
           repos)))
 
-(defalias 'gh/cpall 'github/clone-or-pull-all)
-(defalias 'gh/cprepo 'github/clone-or-pull-repo)
+(defalias 'gh/all 'github/clone-or-pull-all)
+(defalias 'gh/repo 'github/clone-or-pull-repo)
 
 (provide 'github)
 ;;; github.el ends here

@@ -10,7 +10,7 @@
 ;;; Code:
 
 ;; -*- lexical-binding: t; -*-
-(require 'lazygit (expand-file-name "lazygit.el"))
+(require 'lazygit)
 
 (defun gitlab/retriever (endpoint)
   "Retrieve resources from GitLab ENDPOINT."
@@ -85,8 +85,8 @@
              (cdr (assoc 'ssh_url_to_repo p))))
           projects)))
 
-(defalias 'gl/cpgrp 'gitlab/clone-or-pull-group)
-(defalias 'gl/cpprj 'gitlab/clone-or-pull-project)
+(defalias 'gl/grp 'gitlab/clone-or-pull-group)
+(defalias 'gl/prj 'gitlab/clone-or-pull-project)
 
 (provide 'gitlab)
 ;;; gitlab.el ends here

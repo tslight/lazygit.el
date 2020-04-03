@@ -13,7 +13,7 @@
 (require 'json)
 (require 'package)
 (require 'url)
-(require 'utils (expand-file-name "utils.el"))
+(require 'utils)
 
 (defgroup lazygit/api-keys nil
   "API keys."

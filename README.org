@@ -1,12 +1,44 @@
-* SLACK OFF & BE A LAZY GIT
+* Git Hosting API Clients for Emacs
 
 A very basic Emacs client for GitLab and GitHub so far...
 
-Store API keys in ~$HOME/.gitlab.key~ and ~$HOME/.github.key~ respectively.
+Get slack - be a lazy git!
 
-These locations can be changed like so:
+** Example Use Package Configuration
 
 #+begin_src emacs-lisp
-(setq gitlab/api-key-file "/path/to/gitlab.key")
-(setq github/api-key-file "/path/to/github.key")
+  (use-package lazygit
+    :load-path "/path/to/where/you/cloned/this/repo"
+    :config
+    (setq gitlab/api-key-file "~/.gitlab.key")
+    (setq github/api-key-file "~/.github.key"))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package gitlab
+    :after lazygit
+    :bind
+    ("C-c C-g l c" . gitlab/clone-or-pull-project)
+    ("C-c C-g l g" . gitlab/clone-or-pull-group)
+    ("C-c C-g l r" . gitlab/retriever))
+#+end_src
+
+#+begin_src emacs-lisp
+  (use-package github
+    :after lazygit
+    :bind
+    ("C-c C-g h a" . github/clone-or-pull-all)
+    ("C-c C-g h c" . github/clone-or-pull-repo)
+    ("C-c C-g h r" . github/retriever))
+#+end_src
+
+** If you're not using Use Package...
+
+...shame on you.
+
+#+begin_src emacs-lisp
+  (add-to-list 'load-path "/path/to/where/you/cloned/this/repo")
+  (require 'lazygit)
+  (setq gitlab/api-key-file "~/.gitlab.key")
+  (setq github/api-key-file "~/.github.key")
 #+end_src
