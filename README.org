@@ -1,8 +1,4 @@
-* Git Hosting API Clients for Emacs
-
-A very basic Emacs client for GitLab and GitHub...
-
-Get slack - be a lazy git!
+* Emacs API Clients for GitHub & GitLab
 
 ** Overview
 
