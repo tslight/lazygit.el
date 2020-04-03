@@ -96,11 +96,11 @@ installed.
 
 #+CAPTION: Results of github/retriever user
 #+NAME:fig:github/retriever
-     [[./img/nav.jpg]]
+     [[./img/nav.png]]
 
 Results of running ~(github/retriever "user")~ when [[https://github.com/DamienCassou/json-navigator][json-navigator]] is not
 installed.
 
 #+CAPTION: Results of github/retriever user
 #+NAME:fig:github/retriever
-     [[./img/json.jpg]]
+     [[./img/json.png]]
