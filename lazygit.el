@@ -62,6 +62,7 @@ Results will be pretty printed in a buffer, and if
     (insert (flatten-json items))
     (json-pretty-print-buffer)
     (goto-char (point-min))
+    (json-mode)
     (if (package-installed-p 'json-navigator)
         (progn (json-navigator-navigate-after-point)
                (execute-kbd-macro (kbd "<return>"))))))
