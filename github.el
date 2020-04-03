@@ -20,6 +20,15 @@
 ;; tree hiearchy browser.  If not, you can view the JSON results pretty printed
 ;; in a dedicated buffer.
 
+;; You will be asked to enter your Personal Access Token the first time you
+;; run a command.
+
+;; Generate a this here: https://github.com/settings/tokens.
+
+;; By default these tokens will be stored in $HOME/.emacs.d/.gitlab.token and
+;; $HOME/.emacs.d/.github.token, however these locations can be customised with
+;; `customize' or `setq'.
+
 ;; Copyright (C) 2020 Toby Slight
 ;; Author: Toby Slight tslight@pm.me
 
