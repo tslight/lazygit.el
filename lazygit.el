@@ -15,7 +15,7 @@
 (require 'url)
 (require 'utils)
 
-(defgroup lazygit/api-keys nil
+(defgroup lazygit/tokens nil
   "API keys."
   :group 'convenience)
 

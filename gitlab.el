@@ -12,28 +12,23 @@
 ;; -*- lexical-binding: t; -*-
 (require 'lazygit)
 
-(defcustom gitlab/apikey-file (concat user-emacs-directory ".gitlab.key")
+(defcustom gitlab/token-file (concat user-emacs-directory ".gitlab.key")
   "File to store GitLab API key in."
-  :group 'lazygit/apikeys
+  :group 'lazygit/tokens
   :type 'file)
 
-(defcustom gitlab/apikey (gitlab/apikey?)
-  "GitLab API key."
-  :group 'lazygit/apikeys
-  :type 'string)
-
-(defun gitlab/init (apikey)
-  "Prompt for GitLab APIKEY and write it to `gitlab/api-key-file'."
+(defun gitlab/install-token (token)
+  "Prompt for GitLab TOKEN and write it to `gitlab/token-file'."
   (interactive "sEnter your GitLab API key: ")
-  (write-region apikey nil gitlab/apikey-file)
-  (apikey))
+  (write-region token nil gitlab/token-file)
+  token)
 
-(defun gitlab/apikey? ()
-  "Check it `gitlab/apikey-file' exists and is non-empty."
-  (if (and (file-readable-p gitlab/apikey-file)
-	   (file-regular-p gitlab/apikey-file))
-      (read-file gitlab/apikey-file)
-    (gitlab/init)))
+(defun gitlab/token? ()
+  "Check it `gitlab/token-file' exists and is non-empty."
+  (if (and (file-readable-p gitlab/token-file)
+	   (file-regular-p gitlab/token-file))
+      (read-file gitlab/token-file)
+    (call-interactively #'gitlab/install-token)))
 
 (defun gitlab/retriever (endpoint)
   "Retrieve resources from GitLab ENDPOINT."
@@ -44,7 +39,7 @@
                                    "order_by=id&sort=asc"
                                    "&membership=true")
                            ;; https://stackoverflow.com/a/24188208
-                           `(("PRIVATE-TOKEN" . ,gitlab/api-key))))
+                           `(("PRIVATE-TOKEN" . ,(gitlab/token?)))))
 
 (defun gitlab/get-values (endpoint keys)
   "Retrieve values from KEYS of GitLab ENDPOINT json resources."
@@ -55,7 +50,7 @@
                           "&membership=true")
                   keys
                   ;; https://stackoverflow.com/a/24188208
-                  `(("PRIVATE-TOKEN" . ,gitlab/api-key))))
+                  `(("PRIVATE-TOKEN" . ,(gitlab/token?)))))
 
 (defun gitlab/clone-or-pull-project (directory)
   "Clone or pull repo to DIRECTORY."

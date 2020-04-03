@@ -12,28 +12,23 @@
 ;; -*- lexical-binding: t; -*-
 (require 'lazygit)
 
-(defcustom github/apikey-file (concat user-emacs-directory ".github.key")
+(defcustom github/token-file (concat user-emacs-directory ".github.key")
   "File to store GitHub API key in."
-  :group 'lazygit/apikeys
+  :group 'lazygit/tokens
   :type 'file)
 
-(defcustom github/apikey (github/apikey?)
-  "GitHub API key."
-  :group 'lazygit/apikeys
-  :type 'string)
-
-(defun github/init (apikey)
-  "Prompt for GitHub APIKEY and write it to `github/api-key-file'."
+(defun github/install-token (token)
+  "Prompt for GitHub TOKEN and write it to `github/token-file'."
   (interactive "sEnter your GitHub API key: ")
-  (write-region apikey nil github/apikey-file)
-  (apikey))
+  (write-region token nil github/token-file)
+  token)
 
-(defun github/apikey? ()
-  "Check it `github/apikey-file' exists and is non-empty."
-  (if (and (file-readable-p github/apikey-file)
-	   (file-regular-p github/apikey-file))
-      (read-file github/apikey-file)
-    (github/init)))
+(defun github/token? ()
+  "Check it `github/token-file' exists and is non-empty."
+  (if (and (file-readable-p github/token-file)
+	   (file-regular-p github/token-file))
+      (read-file github/token-file)
+    (call-interactively #'github/install-token)))
 
 (defun github/retriever (endpoint)
   "Retrieve resources from GitHub ENDPOINT."
@@ -42,7 +37,7 @@
                                    endpoint
                                    "?per_page=100&page=1")
                            ;; https://stackoverflow.com/a/24188208
-                           `(("Authorization" . ,(concat "token " github/api-key)))))
+                           `(("Authorization" . ,(concat "token " (github/token?))))))
 
 (defun github/get-values (endpoint keys)
   "Retrieve values from KEYS of GitHub ENDPOINT json resources."
@@ -51,7 +46,7 @@
                           "?per_page=100&page=1")
                   keys
                   ;; https://stackoverflow.com/a/24188208
-                  `(("Authorization" . ,(concat "token " github/api-key)))))
+                  `(("Authorization" . ,(concat "token " (github/token?))))))
 
 (defun github/clone-or-pull-repo (directory)
   "Clone or pull repo to DIRECTORY."

@@ -17,7 +17,7 @@ Get slack - be a lazy git!
   ("C-c C-g l g" . gitlab/clone-or-pull-group)
   ("C-c C-g l r" . gitlab/retriever)
   :config
-  (setq gitlab/api-key-file "~/.gitlab.key"))
+  (setq gitlab/token-file "~/.gitlab.key"))
 
 (use-package github
   :after lazygit
@@ -26,7 +26,7 @@ Get slack - be a lazy git!
   ("C-c C-g h c" . github/clone-or-pull-repo)
   ("C-c C-g h r" . github/retriever)
   :config
-  (setq github/api-key-file "~/.github.key"))
+  (setq github/token-file "~/.github.key"))
 #+end_src
 
 ** If you're not using Use Package...
@@ -36,6 +36,6 @@ Get slack - be a lazy git!
 #+begin_src emacs-lisp
   (add-to-list 'load-path "/path/to/where/you/cloned/this/repo")
   (require 'lazygit)
-  (setq gitlab/api-key-file "~/.gitlab.key")
-  (setq github/api-key-file "~/.github.key")
+  (setq gitlab/token-file "~/.gitlab.key")
+  (setq github/token-file "~/.github.key")
 #+end_src
