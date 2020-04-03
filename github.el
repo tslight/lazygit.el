@@ -12,6 +12,29 @@
 ;; -*- lexical-binding: t; -*-
 (require 'lazygit)
 
+(defcustom github/apikey-file (concat user-emacs-directory ".github.key")
+  "File to store GitHub API key in."
+  :group 'lazygit/apikeys
+  :type 'file)
+
+(defcustom github/apikey (github/apikey?)
+  "GitHub API key."
+  :group 'lazygit/apikeys
+  :type 'string)
+
+(defun github/init (apikey)
+  "Prompt for GitHub APIKEY and write it to `github/api-key-file'."
+  (interactive "sEnter your GitHub API key: ")
+  (write-region apikey nil github/apikey-file)
+  (apikey))
+
+(defun github/apikey? ()
+  "Check it `github/apikey-file' exists and is non-empty."
+  (if (and (file-readable-p github/apikey-file)
+	   (file-regular-p github/apikey-file))
+      (read-file github/apikey-file)
+    (github/init)))
+
 (defun github/retriever (endpoint)
   "Retrieve resources from GitHub ENDPOINT."
   (interactive "sEnter an endpoint: ")

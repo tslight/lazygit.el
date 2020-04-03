@@ -19,26 +19,6 @@
   "API keys."
   :group 'convenience)
 
-(defcustom gitlab/api-key-file "~/.gitlab.key"
-  "File to store GitLab API key in."
-  :group 'lazygit/api-keys
-  :type 'file)
-
-(defcustom gitlab/api-key (read-file gitlab/api-key-file)
-  "GitLab API key."
-  :group 'lazygit/api-keys
-  :type 'string)
-
-(defcustom github/api-key-file "~/.github.key"
-  "File to store GitHub API key in."
-  :group 'lazygit/api-keys
-  :type 'file)
-
-(defcustom github/api-key (read-file github/api-key-file)
-  "GitHub API key."
-  :group 'lazygit/api-keys
-  :type 'string)
-
 (defun url/link-to-next-page ()
   "Return a link to the next page of results.
 Assumes typical keyset based pagination return headers."

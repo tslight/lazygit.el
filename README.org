@@ -7,29 +7,26 @@ Get slack - be a lazy git!
 ** Example Use Package Configuration
 
 #+begin_src emacs-lisp
-  (use-package lazygit
-    :load-path "/path/to/where/you/cloned/this/repo"
-    :config
-    (setq gitlab/api-key-file "~/.gitlab.key")
-    (setq github/api-key-file "~/.github.key"))
-#+end_src
+(use-package lazygit
+  :load-path "~/src/gitlab/tspub/lisp/lazygit")
 
-#+begin_src emacs-lisp
-  (use-package gitlab
-    :after lazygit
-    :bind
-    ("C-c C-g l c" . gitlab/clone-or-pull-project)
-    ("C-c C-g l g" . gitlab/clone-or-pull-group)
-    ("C-c C-g l r" . gitlab/retriever))
-#+end_src
+(use-package gitlab
+  :after lazygit
+  :bind
+  ("C-c C-g l c" . gitlab/clone-or-pull-project)
+  ("C-c C-g l g" . gitlab/clone-or-pull-group)
+  ("C-c C-g l r" . gitlab/retriever)
+  :config
+  (setq gitlab/api-key-file "~/.gitlab.key"))
 
-#+begin_src emacs-lisp
-  (use-package github
-    :after lazygit
-    :bind
-    ("C-c C-g h a" . github/clone-or-pull-all)
-    ("C-c C-g h c" . github/clone-or-pull-repo)
-    ("C-c C-g h r" . github/retriever))
+(use-package github
+  :after lazygit
+  :bind
+  ("C-c C-g h a" . github/clone-or-pull-all)
+  ("C-c C-g h c" . github/clone-or-pull-repo)
+  ("C-c C-g h r" . github/retriever)
+  :config
+  (setq github/api-key-file "~/.github.key"))
 #+end_src
 
 ** If you're not using Use Package...

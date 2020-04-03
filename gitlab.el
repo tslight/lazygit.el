@@ -12,6 +12,29 @@
 ;; -*- lexical-binding: t; -*-
 (require 'lazygit)
 
+(defcustom gitlab/apikey-file (concat user-emacs-directory ".gitlab.key")
+  "File to store GitLab API key in."
+  :group 'lazygit/apikeys
+  :type 'file)
+
+(defcustom gitlab/apikey (gitlab/apikey?)
+  "GitLab API key."
+  :group 'lazygit/apikeys
+  :type 'string)
+
+(defun gitlab/init (apikey)
+  "Prompt for GitLab APIKEY and write it to `gitlab/api-key-file'."
+  (interactive "sEnter your GitLab API key: ")
+  (write-region apikey nil gitlab/apikey-file)
+  (apikey))
+
+(defun gitlab/apikey? ()
+  "Check it `gitlab/apikey-file' exists and is non-empty."
+  (if (and (file-readable-p gitlab/apikey-file)
+	   (file-regular-p gitlab/apikey-file))
+      (read-file gitlab/apikey-file)
+    (gitlab/init)))
+
 (defun gitlab/retriever (endpoint)
   "Retrieve resources from GitLab ENDPOINT."
   (interactive "sEnter an endpoint: ")
