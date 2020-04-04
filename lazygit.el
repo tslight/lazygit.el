@@ -110,7 +110,7 @@ Using PATH, NAME & URL."
          (repo (get-assoc-list repos path choice))
          (cloneurl (cdr (assoc url repo)))
          (reponame (cdr (assoc name repo)))
-         (dest (concat directory reponame)))
+         (dest (concat directory "/" reponame)))
     (git/clone-or-pull dest cloneurl t)))
 
 (defun git/clone-or-pull-batch (repos directory pathkey urlkey)
