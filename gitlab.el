@@ -11,8 +11,12 @@
 ;; If `magit' is installed, this will be used, otherwise we shell out to git,
 ;; so obviously, that needs to be installed on your system.
 
-;; You can also clone or pull all repositories in one fail swoop with
+;; You can clone or pull all repositories in one fail swoop with
 ;; gitlab/clone-or-pull-all.  This will not use `magit', unless called with
+;; prefix argument.
+
+;; You can also clone or pull all the repositories under a given group with
+;; gitlab/clone-or-pull-group.  This will not use `magit', unless called with
 ;; prefix argument.
 
 ;; gitlab/retriever allows arbitrary querying of endpoints.  If
@@ -129,7 +133,22 @@
              (cdr (assoc 'ssh_url_to_repo p))))
           projects)))
 
+(defun gitlab/clone-or-pull-all (directory)
+  "Clone or pull ALL projects to DIRECTORY."
+  (interactive "DDirectory to clone ALL GitLab projects to: ")
+  (let ((projects (gitlab/get-values "projects" (list 'path_with_namespace
+						      'ssh_url_to_repo))))
+    (mapc (lambda (p)
+            (make-directory (concat directory "/"
+				    (cdr (assoc 'path_with_namespace p)))
+			    t)
+            (git/clone-or-pull
+             (concat directory "/" (cdr (assoc 'path_with_namespace p)))
+             (cdr (assoc 'ssh_url_to_repo p))))
+          projects)))
+
 (defalias 'gl/api 'gitlab/retriever)
+(defalias 'gl/all 'gitlab/clone-or-pull-all)
 (defalias 'gl/grp 'gitlab/clone-or-pull-group)
 (defalias 'gl/prj 'gitlab/clone-or-pull-project)
 

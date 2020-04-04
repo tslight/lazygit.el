@@ -62,7 +62,6 @@
                                    endpoint
                                    "?per_page=100&page=1")
 			   "*lazygithub*"
-                           ;; https://stackoverflow.com/a/24188208
                            `(("Authorization" . ,(concat "token " (github/token?))))))
 
 (defun github/get-values (endpoint keys)
@@ -71,7 +70,6 @@
                           endpoint
                           "?per_page=100&page=1")
                   keys
-                  ;; https://stackoverflow.com/a/24188208
                   `(("Authorization" . ,(concat "token " (github/token?))))))
 
 (defun github/clone-or-pull-repo (directory)

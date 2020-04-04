@@ -9,13 +9,13 @@ of repositories available to the authenticated user, with
 If [[https://magit.vc/][Magit]] is installed, this will be used, otherwise we shell out to ~git~, so
 obviously, that needs to be installed on your system.
 
+You can clone or pull all repositories in one fail swoop with
+~github/clone-or-pull-all~ or ~gitlab/clone-or-pull-all~. This will not use
+[[https://magit.vc/][Magit]], unless called with prefix argument.
+
 For GitLab you can also clone or pull all the repositories under a given group
 with ~gitlab/clone-or-pull-group~. This will not use [[https://magit.vc/][Magit]], unless called with
-prefix argument..
-
-For GitHub you can clone or pull all repositories in one fail swoop with
-~github/clone-or-pull-all~. This will not use [[https://magit.vc/][Magit]], unless called with prefix
-argument.
+prefix argument.
 
 ~gitlab/retriever~ and ~github/retriever~ allow arbitrary querying of
 endpoints. If [[https://github.com/DamienCassou/json-navigator][json-navigator]] is installed, the JSON results will be opened in a
