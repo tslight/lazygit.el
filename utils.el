@@ -2,7 +2,7 @@
 
 ;;; Commentary:
 
-;; So far only GitHub & GitLab are supported.
+;; Various miscellaneous utility functions to support lazygit.
 
 ;; Copyright (C) 2020 Toby Slight
 ;; Author: Toby Slight tslight@pm.me
@@ -46,6 +46,8 @@
                items "")
           "]"))
 
+;; Not using this anymore, but if you'd rather output to a dedicated buffer,
+;; change calls to message-async-shell-command to this.
 (defun display-async-shell-command-buffer (command buffer-name &optional erase)
   "Display the results of asynchronous COMMAND in BUFFER-NAME.
 If ERASE is true erase the buffer first"
@@ -62,7 +64,7 @@ If ERASE is true erase the buffer first"
 (defun message-async-shell-command (command)
   "Run COMMAND asynchronously and output results to `minibuffer'."
   (set-process-sentinel (start-process-shell-command command nil command)
-			#'output-message-sentinel))
+			#'message-sentinel-output))
 
 (provide 'utils)
 ;;; utils.el ends here
