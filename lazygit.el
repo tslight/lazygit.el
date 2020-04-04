@@ -95,16 +95,16 @@ Assumes typical keyset based pagination return headers."
   "Return all ITEMS from URL, with optional HEADERS.
 Supports key-based pagination - ie) if returned headers have a
 link to the next page."
-  (set-buffer
-   (let ((url-request-method "GET")
-         (url-request-extra-headers headers))
-     (url-retrieve-synchronously url)))
-  (let ((next-page (lazygit-link-to-next-page)))
-    (delete-region (point-min) url-http-end-of-headers)
-    (let* ((retrieved-items (cons (buffer-string) items)))
-      (if next-page
-          (lazygit-retrieve-paginated-bodies next-page headers retrieved-items)
-        retrieved-items))))
+  (with-current-buffer
+      (let ((url-request-method "GET")
+            (url-request-extra-headers headers))
+	(url-retrieve-synchronously url))
+    (let ((next-page (lazygit-link-to-next-page)))
+      (delete-region (point-min) url-http-end-of-headers)
+      (let* ((retrieved-items (cons (buffer-string) items)))
+	(if next-page
+            (lazygit-retrieve-paginated-bodies next-page headers retrieved-items)
+          retrieved-items)))))
 
 (defun lazygit-parse-retrieved-json (url &optional headers)
   "Return alists from JSON bodies retrieved from URL.
