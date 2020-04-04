@@ -22,6 +22,9 @@ endpoints. If [[https://github.com/DamienCassou/json-navigator][json-navigator]]
 fancy tree hiearchy browser. If not you can view the JSON results pretty
 printed in a dedicated buffer.
 
+*N.B.* /I have only tested this on Emacs 27... Feedback running on other
+versions greatly appreciated/
+
 ** Authentication
 
 You will be asked to enter your /Personal Access Token/ the first time you run
