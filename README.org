@@ -78,8 +78,9 @@ If you want both GitHub & GitLab access:
     :after lazygit
     :commands gl/all gl/api gl/grp gl/prj
     :bind
-    ("C-c g l c" . lazygitlab-clone-or-pull-project)
+    ("C-c g l a" . lazygitlab-clone-or-pull-all)
     ("C-c g l g" . lazygitlab-clone-or-pull-group)
+    ("C-c g l c" . lazygitlab-clone-or-pull-project)
     ("C-c g l r" . lazygitlab-retriever)
     :config
     (setq lazygitlab-token-file "~/.gitlab.key"))
