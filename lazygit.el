@@ -43,29 +43,12 @@
                           (lambda (e) (if (equal value (cdr (assoc key e))) e))
                           list))))
 
-(defun lazygit-flatten-json (items)
-  "Turn a list of json arrays (ITEMS) into a single json array."
-  (concat "[" (mapconcat
-               (lambda (item)
-                 (let*
-                     ((trimmed (replace-regexp-in-string "^\\[\\]$" "" item))
-                      (trimmed (replace-regexp-in-string "^\\[" "" trimmed))
-                      (trimmed (if (equal item (car (last items)))
-                                   (replace-regexp-in-string "\\]$" "" trimmed)
-                                 (replace-regexp-in-string "\\]$" "," trimmed))))
-                   trimmed))
-               items "")
-          "]"))
-
-;; Not using this anymore, but if you'd rather output to a dedicated buffer,
-;; change calls to lazygit-message-async-shell-command to this.
-(defun lazygit-display-async-shell-command-buffer (command buffer-name &optional erase)
-  "Display the results of asynchronous COMMAND in BUFFER-NAME.
-If ERASE is true erase the buffer first"
-  (let ((buffer (get-buffer-create buffer-name)))
-    (if erase (progn (set-buffer buffer) (erase-buffer)))
-    (display-buffer buffer)
-    (start-process-shell-command command buffer command)))
+(defun lazygit-flatten-json (json-arrays)
+  "Turn a list of JSON-ARRAYS into a single json array."
+  (let ((json-array-type 'list))
+    (json-encode-list (mapcan
+		       #'json-read-from-string
+		       json-arrays))))
 
 (defun lazygit-message-sentinel-output (process msg)
   "Write output of PROCESS with MSG."
