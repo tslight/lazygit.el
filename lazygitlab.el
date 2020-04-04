@@ -93,27 +93,27 @@
 
 (defun lazygitlab-subgroups (groups prefix)
   "Return a list of subgroups from GROUPS using PREFIX."
-  (cl-remove-if nil
-                (mapcar
-                 (lambda (g)
-                   (if (string-prefix-p prefix
-                                        (cdr (assoc 'full_path g)))
-                       g))
-                 groups)))
+  (remove nil
+          (mapcar
+           (lambda (g)
+             (if (string-prefix-p prefix
+                                  (cdr (assoc 'full_path g)))
+                 g))
+           groups)))
 
 (defun lazygitlab-group-projects (groups)
   "Return a list of projects from GROUPS."
   (let ((ids (mapcar (lambda (g) (cdr (assoc 'id g))) groups)))
     (apply #'append
-           (cl-remove-if nil
-                         (mapcar
-                          (lambda (id)
-                            (lazygitlab-get-values
-                             (concat "groups/" (number-to-string id) "/projects")
-                             (list 'path_with_namespace
-                                   'name
-                                   'ssh_url_to_repo)))
-                          ids)))))
+           (remove nil
+                   (mapcar
+                    (lambda (id)
+                      (lazygitlab-get-values
+                       (concat "groups/" (number-to-string id) "/projects")
+                       (list 'path_with_namespace
+                             'name
+                             'ssh_url_to_repo)))
+                    ids)))))
 
 (defun lazygitlab-clone-or-pull-group (directory)
   "Prompt for a group, then clone that repo to DIRECTORY."

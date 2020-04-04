@@ -10,7 +10,6 @@
 
 ;;; Code:
 
-(require 'cl-lib)
 (require 'json)
 (require 'package)
 (require 'url)
@@ -39,9 +38,9 @@
 
 (defun lazygit-get-assoc-list (list key value)
   "Return an alist from LIST of alists that has KEY VALUE pair."
-  (car (cl-remove-if nil (mapcar
-                          (lambda (e) (if (equal value (cdr (assoc key e))) e))
-                          list))))
+  (car (remove nil (mapcar
+                    (lambda (e) (if (equal value (cdr (assoc key e))) e))
+                    list))))
 
 (defun lazygit-flatten-json (json-arrays)
   "Turn a list of JSON-ARRAYS into a single json array."
