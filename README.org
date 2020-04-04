@@ -4,20 +4,20 @@
 
 So far I have implemented functions to clone or pull repositories from a list
 of repositories available to the authenticated user, with
-~gitlab/clone-or-pull-repo~ or ~github/clone-or-pull-repo~.
+~lazygitlab-clone-or-pull-repo~ or ~lazygithub-clone-or-pull-repo~.
 
 If [[https://magit.vc/][Magit]] is installed, this will be used, otherwise we shell out to ~git~, so
 obviously, that needs to be installed on your system.
 
 You can clone or pull all repositories in one fail swoop with
-~github/clone-or-pull-all~ or ~gitlab/clone-or-pull-all~. This will not use
+~lazygithub-clone-or-pull-all~ or ~lazygitlab-clone-or-pull-all~. This will not use
 [[https://magit.vc/][Magit]], unless called with prefix argument.
 
 For GitLab you can also clone or pull all the repositories under a given group
-with ~gitlab/clone-or-pull-group~. This will not use [[https://magit.vc/][Magit]], unless called with
+with ~lazygitlab-clone-or-pull-group~. This will not use [[https://magit.vc/][Magit]], unless called with
 prefix argument.
 
-~gitlab/retriever~ and ~github/retriever~ allow arbitrary querying of
+~lazygitlab-retriever~ and ~lazygithub-retriever~ allow arbitrary querying of
 endpoints. If [[https://github.com/DamienCassou/json-navigator][json-navigator]] is installed, the JSON results will be opened in a
 fancy tree hiearchy browser. If not you can view the JSON results pretty
 printed in a dedicated buffer.
@@ -41,18 +41,18 @@ If you just want GitHub access:
 
 #+begin_src emacs-lisp
   (add-to-list 'load-path "/path/to/where/you/cloned/this/repo")
-  (require 'github)
+  (require 'lazygithub)
   ;; optionally change the default personal access token location
-  (setq github/token-file "~/.github.key")
+  (setq lazygithub-token-file "~/.github.key")
 #+end_src
 
 If you just want GitLab access:
 
 #+begin_src emacs-lisp
   (add-to-list 'load-path "/path/to/where/you/cloned/this/repo")
-  (require 'gitlab)
+  (require 'lazygitlab)
   ;; optionally change the default personal access token location
-  (setq gitlab/token-file "~/.gitlab.key")
+  (setq lazygitlab-token-file "~/.gitlab.key")
 #+end_src
 
 If you want both GitHub & GitLab access:
@@ -61,46 +61,49 @@ If you want both GitHub & GitLab access:
   (add-to-list 'load-path "/path/to/where/you/cloned/this/repo")
   (require 'lazygit)
   ;; optionally change the default personal access tokens locations
-  (setq gitlab/token-file "~/.gitlab.key")
-  (setq github/token-file "~/.github.key")
+  (setq lazygitlab-token-file "~/.gitlab.key")
+  (setq lazygithub-token-file "~/.github.key")
 #+end_src
 
 *** Use Package
 
 #+begin_src emacs-lisp
   (use-package lazygit
-    :load-path "~/src/gitlab/tspub/lisp/lazygit")
+    :load-path "/path/to/where/you/cloned/this/repo")
 
-  (use-package gitlab
+  (use-package lazygitlab
     :after lazygit
+    :commands gl/all gl/api gl/grp gl/prj
     :bind
-    ("C-c C-g l c" . gitlab/clone-or-pull-project)
-    ("C-c C-g l g" . gitlab/clone-or-pull-group)
-    ("C-c C-g l r" . gitlab/retriever)
+    ("C-c g l c" . lazygitlab-clone-or-pull-project)
+    ("C-c g l g" . lazygitlab-clone-or-pull-group)
+    ("C-c g l r" . lazygitlab-retriever)
     :config
-    (setq gitlab/token-file "~/.gitlab.key"))
+    (setq lazygitlab-token-file "~/.gitlab.key"))
 
-  (use-package github
+  (use-package lazygithub
     :after lazygit
+    :commands gh/all gh/api gh/repo
     :bind
-    ("C-c C-g h a" . github/clone-or-pull-all)
-    ("C-c C-g h c" . github/clone-or-pull-repo)
-    ("C-c C-g h r" . github/retriever)
+    ("C-c g h a" . lazygithub-clone-or-pull-all)
+    ("C-c g h c" . lazygithub-clone-or-pull-repo)
+    ("C-c g h r" . lazygithub-retriever)
     :config
-    (setq github/token-file "~/.github.key"))
+    (setq lazygithub-token-file "~/.github.key"))
 #+end_src
+
 ** Screenshots
 
-Results of running ~(github/retriever "user/torvalds")~ when [[https://github.com/DamienCassou/json-navigator][json-navigator]] is
+Results of running ~(lazygithub-retriever "user/torvalds")~ when [[https://github.com/DamienCassou/json-navigator][json-navigator]] is
 installed:
 
-#+CAPTION: Results of github/retriever user
-#+NAME:fig:github/retriever
-     [[./img/nav.png]]
+#+CAPTION: Results of lazygithub-retriever user
+#+NAME:fig:lazygithub-retriever
+[[./img/nav.png]]
 
-Results of running ~(github/retriever "user/torvalds")~ when [[https://github.com/DamienCassou/json-navigator][json-navigator]] is not
+Results of running ~(lazygithub-retriever "user/torvalds")~ when [[https://github.com/DamienCassou/json-navigator][json-navigator]] is not
 installed:
 
-#+CAPTION: Results of github/retriever user
-#+NAME:fig:github/retriever
-     [[./img/json.png]]
+#+CAPTION: Results of lazygithub-retriever user
+#+NAME:fig:lazygithub-retriever
+[[./img/json.png]]
