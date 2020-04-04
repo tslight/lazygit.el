@@ -94,13 +94,13 @@ of shelling out to git."
                       (shell-command-to-string
                        (concat "git -C " directory " pull")))))
             (magit-status-setup-buffer directory))
-        (display-async-shell-command-buffer
-         (concat "git -C " directory " pull --quiet") "*lazygit*" t))
+	(message-async-shell-command
+	 (concat "git -C " directory " pull --quiet")))
     (progn
       (if (and with-magit (package-installed-p 'magit))
           (magit-clone-regular url directory nil)
-        (display-async-shell-command-buffer
-         (concat "git clone --quiet " url " " directory) "*lazygit*" t)))))
+	(message-async-shell-command
+	 (concat "git clone --quiet " url " " directory))))))
 
 (defun git/clone-or-pull-repo (repos path name url directory)
   "Prompt for a repo from REPOS, then clone that repo to DIRECTORY.
@@ -112,6 +112,27 @@ Using PATH, NAME & URL."
          (reponame (cdr (assoc name repo)))
          (dest (concat directory reponame)))
     (git/clone-or-pull dest cloneurl t)))
+
+(defun git/clone-or-pull-finished? (directory)
+  "Keep checking to see if DIRECTORY is a git repo."
+  (while (not (git/repo? directory))
+    (message (concat "Waiting for " directory "...")))
+  (message "Finished."))
+
+(defun git/clone-or-pull-batch (repos directory pathkey urlkey)
+  "Batch pull or clone REPOS to DIRECTORY using PATHKEY and URLKEY."
+  (mapc (lambda (r)
+          (make-directory (concat directory "/"
+				  (cdr (assoc pathkey r)))
+			  t)
+          (git/clone-or-pull
+           (concat directory "/" (cdr (assoc pathkey r)))
+           (cdr (assoc urlkey r))))
+        repos)
+  ;; (git/clone-or-pull-finished? (concat directory "/"
+  ;;                                   (cdr (assoc pathkey (car (last repos))))))
+
+  )
 
 (provide 'lazygit)
 ;;; lazygit.el ends here

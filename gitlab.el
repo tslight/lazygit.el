@@ -68,7 +68,6 @@
                                    "order_by=id&sort=asc"
                                    "&membership=true")
 			   "*lazygitlab*"
-                           ;; https://stackoverflow.com/a/24188208
                            `(("PRIVATE-TOKEN" . ,(gitlab/token?)))))
 
 (defun gitlab/get-values (endpoint keys)
@@ -79,12 +78,11 @@
                           "order_by=id&sort=asc"
                           "&membership=true")
                   keys
-                  ;; https://stackoverflow.com/a/24188208
                   `(("PRIVATE-TOKEN" . ,(gitlab/token?)))))
 
 (defun gitlab/clone-or-pull-project (directory)
   "Clone or pull repo to DIRECTORY."
-  (interactive "DDirectory to clone to: ")
+  (interactive "DDirectory to clone GitLab project to: ")
   (git/clone-or-pull-repo (gitlab/get-values "projects" (list 'path_with_namespace
                                                               'name
                                                               'ssh_url_to_repo))
@@ -119,33 +117,26 @@
 
 (defun gitlab/clone-or-pull-group (directory)
   "Prompt for a group, then clone that repo to DIRECTORY."
-  (interactive "DDirectory to clone to: ")
+  (interactive "DDirectory to clone GitLab group to: ")
   (let* ((groups (gitlab/get-values "groups" (list 'full_path 'id)))
          (paths (mapcar (lambda (g) (cdr (assoc 'full_path g))) groups))
          (choice (completing-read "Group or subgroup to batch clone: " paths))
          (groups (gitlab/subgroups groups choice))
-         (paths (mapcar (lambda (g) (cdr (assoc 'full_path g))) groups))
          (projects (gitlab/group-projects groups)))
-    (mapc (lambda (p) (make-directory (concat directory "/" p) t)) paths)
-    (mapc (lambda (p)
-            (git/clone-or-pull
-             (concat directory "/" (cdr (assoc 'path_with_namespace p)))
-             (cdr (assoc 'ssh_url_to_repo p))))
-          projects)))
+    (git/clone-or-pull-batch projects
+			     directory
+			     'path_with_namespace
+			     'ssh_url_to_repo)))
 
 (defun gitlab/clone-or-pull-all (directory)
   "Clone or pull ALL projects to DIRECTORY."
   (interactive "DDirectory to clone ALL GitLab projects to: ")
-  (let ((projects (gitlab/get-values "projects" (list 'path_with_namespace
-						      'ssh_url_to_repo))))
-    (mapc (lambda (p)
-            (make-directory (concat directory "/"
-				    (cdr (assoc 'path_with_namespace p)))
-			    t)
-            (git/clone-or-pull
-             (concat directory "/" (cdr (assoc 'path_with_namespace p)))
-             (cdr (assoc 'ssh_url_to_repo p))))
-          projects)))
+  (let ((projects (gitlab/get-values "projects"
+				     (list 'path_with_namespace 'ssh_url_to_repo))))
+    (git/clone-or-pull-batch projects
+			     directory
+			     'path_with_namespace
+			     'ssh_url_to_repo)))
 
 (defalias 'gl/api 'gitlab/retriever)
 (defalias 'gl/all 'gitlab/clone-or-pull-all)

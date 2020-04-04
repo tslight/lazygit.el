@@ -74,22 +74,17 @@
 
 (defun github/clone-or-pull-repo (directory)
   "Clone or pull repo to DIRECTORY."
-  (interactive "DDirectory to clone to: ")
+  (interactive "DDirectory to clone GitHub repo to: ")
   (git/clone-or-pull-repo (github/get-values "user/repos" (list 'full_name
 								'name
 								'ssh_url))
                           'full_name 'name 'ssh_url directory))
 
 (defun github/clone-or-pull-all (directory)
-  "Clone or pull ALL repos to DIRECTORY."
-  (interactive "DDirectory to clone to: ")
+  "Clone or pull ALL GitHub repos to DIRECTORY."
+  (interactive "DDirectory to clone ALL GitHub repos to: ")
   (let ((repos (github/get-values "user/repos" (list 'full_name 'ssh_url))))
-    (mapc (lambda (r)
-            (make-directory (concat directory "/" (cdr (assoc 'full_name r))) t)
-            (git/clone-or-pull
-             (concat directory "/" (cdr (assoc 'full_name r)))
-             (cdr (assoc 'ssh_url r))))
-          repos)))
+    (git/clone-or-pull-batch repos directory 'full_name 'ssh_url)))
 
 (defalias 'gh/api 'github/retriever)
 (defalias 'gh/all 'github/clone-or-pull-all)

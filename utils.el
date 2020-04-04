@@ -54,5 +54,15 @@ If ERASE is true erase the buffer first"
     (display-buffer buffer)
     (start-process-shell-command command buffer command)))
 
+(defun message-sentinel-output (process msg)
+  "Write output of PROCESS with MSG."
+  (when (memq (process-status process) '(exit signal))
+    (message (string-trim (concat (process-name process) " " msg)))))
+
+(defun message-async-shell-command (command)
+  "Run COMMAND asynchronously and output results to `minibuffer'."
+  (set-process-sentinel (start-process-shell-command command nil command)
+			#'output-message-sentinel))
+
 (provide 'utils)
 ;;; utils.el ends here
