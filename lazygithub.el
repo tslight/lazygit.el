@@ -55,23 +55,23 @@
       (lazygit-read-file lazygithub-token-file)
     (call-interactively #'lazygithub-install-token)))
 
+(defvar lazygithub-baseurl "https://api.github.com/")
+(defvar lazygithub-attr "?per_page=100&page=1")
+(defvar lazygithub-token (concat "token " (lazygithub-token-p)))
+(defvar lazygithub-auth-header `(("Authorization" . ,lazygithub-token)))
+
 (defun lazygithub-retriever (endpoint)
   "Retrieve resources from GitHub ENDPOINT."
   (interactive "sEnter a GitHub API endpoint: ")
-  (lazygit-view-retrieved-json (concat "https://api.github.com/"
-                                       endpoint
-                                       "?per_page=100&page=1")
+  (lazygit-view-retrieved-json (concat lazygithub-baseurl endpoint lazygithub-attr)
 			       "*lazygithub*"
-                               `(("Authorization" . ,(concat "token "
-							     (lazygithub-token-p))))))
+			       lazygithub-auth-header))
 
 (defun lazygithub-get-values (endpoint keys)
   "Retrieve values from KEYS of GitHub ENDPOINT json resources."
-  (lazygit-get-values (concat "https://api.github.com/"
-                              endpoint
-                              "?per_page=100&page=1")
+  (lazygit-get-values (concat lazygithub-baseurl endpoint lazygithub-attr)
                       keys
-                      `(("Authorization" . ,(concat "token " (lazygithub-token-p))))))
+                      lazygithub-auth-header))
 
 (defun lazygithub-clone-or-pull-repo (directory)
   "Clone or pull repo to DIRECTORY."

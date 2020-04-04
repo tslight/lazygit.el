@@ -58,26 +58,23 @@
       (lazygit-read-file lazygitlab-token-file)
     (call-interactively #'lazygitlab-install-token)))
 
+(defvar lazygitlab-baseurl "https://gitlab.com/api/v4/")
+(defvar lazygitlab-attr "?pagination=keyset&per_page=100&order_by=id&sort=asc&membership=true")
+(defvar lazygitlab-token (lazygitlab-token-p))
+(defvar lazygitlab-auth-header `(("PRIVATE-TOKEN" . ,lazygitlab-token)))
+
 (defun lazygitlab-retriever (endpoint)
   "Retrieve resources from GitLab ENDPOINT."
   (interactive "sEnter GitLab API endpoint: ")
-  (lazygit-view-retrieved-json (concat "https://gitlab.com/api/v4/"
-                                       endpoint
-                                       "?pagination=keyset&per_page=100&"
-                                       "order_by=id&sort=asc"
-                                       "&membership=true")
+  (lazygit-view-retrieved-json (concat lazygitlab-baseurl endpoint lazygitlab-attr)
 			       "*lazygitlab*"
-                               `(("PRIVATE-TOKEN" . ,(lazygitlab-token-p)))))
+                               lazygitlab-auth-header))
 
 (defun lazygitlab-get-values (endpoint keys)
   "Retrieve values from KEYS of GitLab ENDPOINT json resources."
-  (lazygit-get-values (concat "https://gitlab.com/api/v4/"
-                              endpoint
-                              "?pagination=keyset&per_page=100&"
-                              "order_by=id&sort=asc"
-                              "&membership=true")
+  (lazygit-get-values (concat lazygitlab-baseurl endpoint lazygitlab-attr)
                       keys
-                      `(("PRIVATE-TOKEN" . ,(lazygitlab-token-p)))))
+                      lazygitlab-auth-header))
 
 (defun lazygitlab-clone-or-pull-project (directory)
   "Clone or pull repo to DIRECTORY."
