@@ -1,5 +1,9 @@
 * Emacs API Clients for GitHub & GitLab
 
+#+CAPTION: Results of CI workflow
+#+NAME:fig:ci-bad
+[[https://github.com/tslight/lazygit.el/workflows/CI/badge.svg]]
+
 ** Overview
 
 So far I have implemented functions to clone or pull repositories from a list
