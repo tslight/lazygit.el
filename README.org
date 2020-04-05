@@ -86,6 +86,7 @@ If you want both GitHub & GitLab access:
     ("C-c g l g" . lazygitlab-clone-or-pull-group)
     ("C-c g l r" . lazygitlab-retriever)
     :config
+    (setq lazygitlab-token-file "~/.gitlab.key")
     (defalias 'gl/api 'lazygitlab-retriever)
     (defalias 'gl/all 'lazygitlab-clone-or-pull-all)
     (defalias 'gl/grp 'lazygitlab-clone-or-pull-group)
@@ -98,6 +99,7 @@ If you want both GitHub & GitLab access:
     ("C-c g h c" . lazygithub-clone-or-pull-repo)
     ("C-c g h r" . lazygithub-retriever)
     :config
+    (setq lazygithub-token-file "~/.github.key")
     (defalias 'gh/api 'lazygithub-retriever)
     (defalias 'gh/all 'lazygithub-clone-or-pull-all)
     (defalias 'gh/repo 'lazygithub-clone-or-pull-repo))
