@@ -800,8 +800,6 @@ function lint-package {
 
     verbose 1 "Linting package..."
 
-    echo "$(package-main-file)"
-
     run_emacs \
         --load package-lint \
         --eval "(setq package-lint-main-file \"$(package-main-file)\")" \
