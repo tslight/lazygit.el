@@ -172,4 +172,7 @@ Using PATH, NAME & URL."
         repos))
 
 (provide 'lazygit)
+;; Local Variables:
+;; byte-compile-warnings: (not free-vars)
+;; End:
 ;;; lazygit.el ends here
