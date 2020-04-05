@@ -36,8 +36,6 @@
 ;; Copyright (C) 2020 Toby Slight
 ;; Author: Toby Slight tslight@pm.me
 ;; URL: https://github.com/purcell/package-lint
-;; Package-Requires: ((emacs "24.4"))
-;; Version: 0
 
 ;;; Code:
 (require 'lazygit)
