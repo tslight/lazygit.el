@@ -1,5 +1,4 @@
-;; -*- lexical-binding: t; -*-
-;;; lazygithub.el --- GitHub API client for Emacs
+;;; lazygithub.el --- GitHub API client for Emacs  -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 

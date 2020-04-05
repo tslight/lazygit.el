@@ -1,5 +1,4 @@
-;; -*- lexical-binding: t; -*-
-;;; lazygit.el --- Git hosting API clients for Emacs
+;;; lazygit.el --- Git hosting API clients for Emacs  -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 

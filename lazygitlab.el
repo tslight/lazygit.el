@@ -1,5 +1,4 @@
-;; -*- lexical-binding: t; -*-
-;;; lazygitlab.el --- GitLab API client for Emacs
+;;; lazygitlab.el --- GitLab API client for Emacs  -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 
