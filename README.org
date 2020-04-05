@@ -76,28 +76,31 @@ If you want both GitHub & GitLab access:
 
 #+begin_src emacs-lisp
   (use-package lazygit
-    :load-path "/path/to/where/you/cloned/this/repo")
+    :load-path "/path/to/cloned/repo")
 
   (use-package lazygitlab
     :after lazygit
-    :commands gl/all gl/api gl/grp gl/prj
     :bind
     ("C-c g l a" . lazygitlab-clone-or-pull-all)
-    ("C-c g l g" . lazygitlab-clone-or-pull-group)
     ("C-c g l c" . lazygitlab-clone-or-pull-project)
+    ("C-c g l g" . lazygitlab-clone-or-pull-group)
     ("C-c g l r" . lazygitlab-retriever)
     :config
-    (setq lazygitlab-token-file "~/.gitlab.key"))
+    (defalias 'gl/api 'lazygitlab-retriever)
+    (defalias 'gl/all 'lazygitlab-clone-or-pull-all)
+    (defalias 'gl/grp 'lazygitlab-clone-or-pull-group)
+    (defalias 'gl/repo 'lazygitlab-clone-or-pull-project))
 
   (use-package lazygithub
     :after lazygit
-    :commands gh/all gh/api gh/repo
     :bind
     ("C-c g h a" . lazygithub-clone-or-pull-all)
     ("C-c g h c" . lazygithub-clone-or-pull-repo)
     ("C-c g h r" . lazygithub-retriever)
     :config
-    (setq lazygithub-token-file "~/.github.key"))
+    (defalias 'gh/api 'lazygithub-retriever)
+    (defalias 'gh/all 'lazygithub-clone-or-pull-all)
+    (defalias 'gh/repo 'lazygithub-clone-or-pull-repo))
 #+end_src
 
 ** Screenshots
