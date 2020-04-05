@@ -1,8 +1,9 @@
 * Emacs API Clients for GitHub & GitLab
 
 #+CAPTION: Results of CI workflow
-#+NAME:fig:ci-bad
-[[https://github.com/tslight/lazygit.el/actions][https://github.com/tslight/lazygit.el/workflows/CI/badge.svg]]
+#+NAME: fig: ci-bad
+#+LINK: https://github.com/tslight/lazygit.el/actions
+[[https://github.com/tslight/lazygit.el/workflows/CI/badge.svg]]
 
 ** Overview
 
