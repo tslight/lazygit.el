@@ -105,7 +105,7 @@ Results will be pretty printed in a buffer, and if
     (insert (lazygit-flatten-json items))
     (json-pretty-print-buffer)
     (goto-char (point-min))
-    (json-mode)
+    (if (featurep 'json-mode) (json-mode))
     (if (package-installed-p 'json-navigator)
         (progn (json-navigator-navigate-after-point)
                (execute-kbd-macro (kbd "<return>"))))))
@@ -173,6 +173,6 @@ Using PATH, NAME & URL."
 
 (provide 'lazygit)
 ;; Local Variables:
-;; byte-compile-warnings: (not free-vars)
+;; byte-compile-warnings: (not free-vars noruntime)
 ;; End:
 ;;; lazygit.el ends here
