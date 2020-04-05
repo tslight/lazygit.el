@@ -1,4 +1,4 @@
-;;; lazygithub.el --- GitHub API client for Emacs  -*- lexical-binding: t; -*-
+;;; lazygithub.el --- GitHub API Client -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 
@@ -31,9 +31,11 @@
 
 ;; Copyright (C) 2020 Toby Slight
 ;; Author: Toby Slight tslight@pm.me
+;; URL: https://github.com/purcell/package-lint
+;; Package-Requires: ((emacs "24.4"))
+;; Version: 0
 
 ;;; Code:
-
 (require 'lazygit)
 
 (defcustom lazygithub-token-file (concat user-emacs-directory ".github.token")
@@ -67,13 +69,13 @@
 			       lazygithub-auth-header))
 
 (defun lazygithub-get-values (endpoint keys)
-  "Retrieve values from KEYS of GitHub ENDPOINT json resources."
+  "Retrieve values from KEYS of GitHub ENDPOINT JSON resources."
   (lazygit-get-values (concat lazygithub-baseurl endpoint lazygithub-attr)
                       keys
                       lazygithub-auth-header))
 
 (defun lazygithub-clone-or-pull-repo (directory)
-  "Clone or pull repo to DIRECTORY."
+  "Clone or pull repository to DIRECTORY."
   (interactive "DDirectory to clone GitHub repo to: ")
   (lazygit-clone-or-pull-repo (lazygithub-get-values "user/repos" (list 'full_name
 									'name
@@ -81,14 +83,13 @@
                               'full_name 'name 'ssh_url directory))
 
 (defun lazygithub-clone-or-pull-all (directory)
-  "Clone or pull ALL GitHub repos to DIRECTORY."
+  "Clone or pull ALL GitHub repositories to DIRECTORY."
   (interactive "DDirectory to clone ALL GitHub repos to: ")
   (let ((repos (lazygithub-get-values "user/repos" (list 'full_name 'ssh_url))))
     (lazygit-clone-or-pull-batch repos directory 'full_name 'ssh_url)))
 
-(defalias 'gh/api 'lazygithub-retriever)
-(defalias 'gh/all 'lazygithub-clone-or-pull-all)
-(defalias 'gh/repo 'lazygithub-clone-or-pull-repo)
-
 (provide 'lazygithub)
+;; Local Variables:
+;; indent-tabs-mode: nil
+;; End:
 ;;; lazygithub.el ends here

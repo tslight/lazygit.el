@@ -1,4 +1,4 @@
-;;; lazygitlab.el --- GitLab API client for Emacs  -*- lexical-binding: t; -*-
+;;; lazygitlab.el --- GitLab API Client -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 
@@ -35,17 +35,20 @@
 
 ;; Copyright (C) 2020 Toby Slight
 ;; Author: Toby Slight tslight@pm.me
+;; URL: https://github.com/purcell/package-lint
+;; Package-Requires: ((emacs "24.4"))
+;; Version: 0
 
 ;;; Code:
 (require 'lazygit)
 
 (defcustom lazygitlab-token-file (concat user-emacs-directory ".gitlab.token")
-  "File to store GitLab API Personal Access Token in."
+  "File to store `GitLab' API Personal Access Token in."
   :group 'lazygit-tokens
   :type 'file)
 
 (defun lazygitlab-install-token (token)
-  "Prompt for GitLab TOKEN and write it to `lazygitlab-token-file'."
+  "Prompt for `GitLab' TOKEN and write it to `lazygitlab-token-file'."
   (interactive "sEnter your GitLab Personal Access Token: ")
   (write-region token nil lazygitlab-token-file)
   token)
@@ -53,7 +56,7 @@
 (defun lazygitlab-token-p ()
   "Check it `lazygitlab-token-file' exists and is non-empty."
   (if (and (file-readable-p lazygitlab-token-file)
-	   (file-regular-p lazygitlab-token-file))
+           (file-regular-p lazygitlab-token-file))
       (lazygit-read-file lazygitlab-token-file)
     (call-interactively #'lazygitlab-install-token)))
 
@@ -63,25 +66,25 @@
 (defvar lazygitlab-auth-header `(("PRIVATE-TOKEN" . ,lazygitlab-token)))
 
 (defun lazygitlab-retriever (endpoint)
-  "Retrieve resources from GitLab ENDPOINT."
+  "Retrieve resources from `GitLab' ENDPOINT."
   (interactive "sEnter GitLab API endpoint: ")
   (lazygit-view-retrieved-json (concat lazygitlab-baseurl endpoint lazygitlab-attr)
-			       "*lazygitlab*"
+                               "*lazygitlab*"
                                lazygitlab-auth-header))
 
 (defun lazygitlab-get-values (endpoint keys)
-  "Retrieve values from KEYS of GitLab ENDPOINT json resources."
+  "Retrieve values from KEYS of `GitLab' ENDPOINT JSON resources."
   (lazygit-get-values (concat lazygitlab-baseurl endpoint lazygitlab-attr)
                       keys
                       lazygitlab-auth-header))
 
 (defun lazygitlab-clone-or-pull-project (directory)
-  "Clone or pull repo to DIRECTORY."
+  "Clone or pull repository to DIRECTORY."
   (interactive "DDirectory to clone GitLab project to: ")
   (lazygit-clone-or-pull-repo
    (lazygitlab-get-values "projects" (list 'path_with_namespace
-					   'name
-					   'ssh_url_to_repo))
+                                           'name
+                                           'ssh_url_to_repo))
    'path_with_namespace
    'name
    'ssh_url_to_repo
@@ -112,7 +115,7 @@
                     ids)))))
 
 (defun lazygitlab-clone-or-pull-group (directory)
-  "Prompt for a group, then clone that repo to DIRECTORY."
+  "Prompt for a group, then clone that repository to DIRECTORY."
   (interactive "DDirectory to clone GitLab group to: ")
   (let* ((groups (lazygitlab-get-values "groups" (list 'full_path 'id)))
          (paths (mapcar (lambda (g) (cdr (assoc 'full_path g))) groups))
@@ -120,24 +123,22 @@
          (groups (lazygitlab-subgroups groups choice))
          (projects (lazygitlab-group-projects groups)))
     (lazygit-clone-or-pull-batch projects
-				 directory
-				 'path_with_namespace
-				 'ssh_url_to_repo)))
+                                 directory
+                                 'path_with_namespace
+                                 'ssh_url_to_repo)))
 
 (defun lazygitlab-clone-or-pull-all (directory)
   "Clone or pull ALL projects to DIRECTORY."
   (interactive "DDirectory to clone ALL GitLab projects to: ")
   (let ((projects (lazygitlab-get-values "projects"
-					 (list 'path_with_namespace 'ssh_url_to_repo))))
+                                         (list 'path_with_namespace 'ssh_url_to_repo))))
     (lazygit-clone-or-pull-batch projects
-				 directory
-				 'path_with_namespace
-				 'ssh_url_to_repo)))
-
-(defalias 'gl/api 'lazygitlab-retriever)
-(defalias 'gl/all 'lazygitlab-clone-or-pull-all)
-(defalias 'gl/grp 'lazygitlab-clone-or-pull-group)
-(defalias 'gl/prj 'lazygitlab-clone-or-pull-project)
+                                 directory
+                                 'path_with_namespace
+                                 'ssh_url_to_repo)))
 
 (provide 'lazygitlab)
+;; Local Variables:
+;; indent-tabs-mode: nil
+;; End:
 ;;; lazygitlab.el ends here

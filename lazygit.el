@@ -1,4 +1,4 @@
-;;; lazygit.el --- Git hosting API clients for Emacs  -*- lexical-binding: t; -*-
+;;; lazygit.el --- Git Forge Clients -*- lexical-binding: t; -*-
 
 ;;; Commentary:
 
@@ -6,11 +6,12 @@
 
 ;; Copyright (C) 2020 Toby Slight
 ;; Author: Toby Slight tslight@pm.me
+;; URL: https://github.com/purcell/package-lint
+;; Package-Requires: ((Emacs "24.4"))
 
 ;;; Code:
 
 (require 'json)
-(require 'package)
 (require 'url)
 
 (defgroup lazygit-tokens nil
@@ -36,13 +37,13 @@
           list))
 
 (defun lazygit-get-assoc-list (list key value)
-  "Return an alist from LIST of alists that has KEY VALUE pair."
+  "Return an alist from LIST of association lists that has KEY VALUE pair."
   (car (remove nil (mapcar
                     (lambda (e) (if (equal value (cdr (assoc key e))) e))
                     list))))
 
 (defun lazygit-flatten-json (json-arrays)
-  "Turn a list of JSON-ARRAYS into a single json array."
+  "Turn a list of JSON-ARRAYS into a single JSON array."
   (let ((json-array-type 'list))
     (json-encode-list (mapcan
 		       #'json-read-from-string
@@ -64,7 +65,7 @@
 
 (defun lazygit-link-to-next-page ()
   "Return a link to the next page of results.
-Assumes typical keyset based pagination return headers."
+Assumes typical key-set based pagination return headers."
   (goto-char (point-min))
   (let ((begin (re-search-forward "Link.*: <" nil t))
         (end (re-search-forward ">; rel=\"next\"" nil t)))
@@ -74,7 +75,7 @@ Assumes typical keyset based pagination return headers."
 
 (defun lazygit-retrieve-paginated-bodies (url &optional headers items)
   "Return all ITEMS from URL, with optional HEADERS.
-Supports key-based pagination - ie) if returned headers have a
+Supports key-based pagination - i.e) if returned headers have a
 link to the next page."
   (with-current-buffer
       (let ((url-request-method "GET")
@@ -88,15 +89,15 @@ link to the next page."
           retrieved-items)))))
 
 (defun lazygit-parse-retrieved-json (url &optional headers)
-  "Return alists from JSON bodies retrieved from URL.
-Optional HEADERS can be specifified."
+  "Return association lists from JSON bodies retrieved from URL.
+Optional HEADERS can be specified."
   (let* ((json (lazygit-retrieve-paginated-bodies url headers))
          (json-array-type 'list)
          (parsed-json (json-read-from-string (lazygit-flatten-json json))))
     parsed-json))
 
 (defun lazygit-view-retrieved-json (url buffer &optional headers)
-  "View the json retreived from URL, with optional HEADERS, in BUFFER.
+  "View the JSON retrieved from URL, with optional HEADERS, in BUFFER.
 Results will be pretty printed in a buffer, and if
 `json-navigator' is installed will be viewed opened in that."
   (let ((items (lazygit-retrieve-paginated-bodies url headers)))
@@ -105,13 +106,13 @@ Results will be pretty printed in a buffer, and if
     (insert (lazygit-flatten-json items))
     (json-pretty-print-buffer)
     (goto-char (point-min))
-    (if (featurep 'json-mode) (json-mode))
-    (if (package-installed-p 'json-navigator)
+    (if (fboundp 'json-mode) (json-mode))
+    (if (fboundp 'json-navigator-navigate-after-point)
         (progn (json-navigator-navigate-after-point)
                (execute-kbd-macro (kbd "<return>"))))))
 
 (defun lazygit-get-values (url keys &optional headers)
-  "Retrieve values from KEYS from a list of URL json objects."
+  "Retrieve values from KEYS from a list of URL JSON objects."
   (let ((response (lazygit-parse-retrieved-json url headers)))
     (lazygit-filter-keys response keys)))
 
@@ -120,7 +121,7 @@ Results will be pretty printed in a buffer, and if
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defun lazygit-repo-p (directory)
-  "Return non-nil if there is a git repo in DIRECTORY."
+  "Return non-nil if there is a git repository in DIRECTORY."
   (and
    (file-directory-p (concat directory "/.git"))
    (file-directory-p (concat directory "/.git/info"))
@@ -129,11 +130,11 @@ Results will be pretty printed in a buffer, and if
    (file-regular-p (concat directory "/.git/HEAD"))))
 
 (defun lazygit-clone-or-pull (directory url &optional with-magit)
-  "Clone or pull a git repo from URL to DIRECTORY.
-If WITH-MAGIT is true and `magit' is installed, use that instead
-of shelling out to git."
+  "Clone or pull a git repository from URL to DIRECTORY.
+If `WITH-MAGIT' is true and `magit' is installed, use that
+instead of shelling out to git."
   (if (lazygit-repo-p directory)
-      (if (and with-magit (package-installed-p 'magit))
+      (if (and with-magit (fboundp 'magit-status-setup-buffer))
           (progn
             (message
              (concat directory ": "
@@ -144,13 +145,13 @@ of shelling out to git."
 	(lazygit-message-async-shell-command
 	 (concat "git -C " directory " pull --quiet")))
     (progn
-      (if (and with-magit (package-installed-p 'magit))
+      (if (and with-magit (fboundp 'magit-clone-regular))
 	  (magit-clone-regular url directory nil)
 	(lazygit-message-async-shell-command
 	 (concat "git clone --quiet " url " " directory))))))
 
 (defun lazygit-clone-or-pull-repo (repos path name url directory)
-  "Prompt for a repo from REPOS, then clone that repo to DIRECTORY.
+  "Prompt for a repository from REPOS, then clone that repository to DIRECTORY.
 Using PATH, NAME & URL."
   (let* ((paths (mapcar (lambda (r) (cdr (assoc path r))) repos))
          (choice (completing-read "Repo to clone: " paths))
