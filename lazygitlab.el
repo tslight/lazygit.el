@@ -61,21 +61,19 @@
 
 (defvar lazygitlab-baseurl "https://gitlab.com/api/v4/")
 (defvar lazygitlab-attr "?pagination=keyset&per_page=100&order_by=id&sort=asc&membership=true")
-(defvar lazygitlab-token (lazygitlab-token-p))
-(defvar lazygitlab-auth-header `(("PRIVATE-TOKEN" . ,lazygitlab-token)))
 
 (defun lazygitlab-retriever (endpoint)
   "Retrieve resources from `GitLab' ENDPOINT."
   (interactive "sEnter GitLab API endpoint: ")
   (lazygit-view-retrieved-json (concat lazygitlab-baseurl endpoint lazygitlab-attr)
                                "*lazygitlab*"
-                               lazygitlab-auth-header))
+                               `(("PRIVATE-TOKEN" . ,(lazygitlab-token-p)))))
 
 (defun lazygitlab-get-values (endpoint keys)
   "Retrieve values from KEYS of `GitLab' ENDPOINT JSON resources."
   (lazygit-get-values (concat lazygitlab-baseurl endpoint lazygitlab-attr)
                       keys
-                      lazygitlab-auth-header))
+                      `(("PRIVATE-TOKEN" . ,(lazygitlab-token-p)))))
 
 (defun lazygitlab-clone-or-pull-project (directory)
   "Clone or pull repository to DIRECTORY."
