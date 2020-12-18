@@ -25,7 +25,7 @@
 
 ;; Generate a this here: https://github.com/settings/tokens.
 
-;; By default these tokens will be stored in $HOME/.emacs.d/.gitlab.token and
+;; By default these tokens will be stored in $HOME/.emacs.d/.github.token and
 ;; $HOME/.emacs.d/.github.token, however these locations can be customised with
 ;; `customize' or `setq'.
 
@@ -37,24 +37,27 @@
 ;;; Code:
 (require 'lazygit)
 
-(defcustom lazygithub-token-file (concat user-emacs-directory ".github.token")
-  "File to store GitHub Personal Access Token in."
-  :group 'lazygit-tokens
-  :type 'file)
+(defcustom lazygithub-directory (expand-file-name "~/src/github")
+  "File to store API Personal Access Tokens in."
+  :group 'lazygit
+  :type 'directory)
 
-;;;###autoload
 (defun lazygithub-install-token (token)
-  "Prompt for GitHub TOKEN and write it to `lazygithub-token-file'."
+  "Prompt for `GitHub' TOKEN and write it to `lazygithub-token-file'."
   (interactive "sEnter your GitHub Personal Access Token: ")
-  (write-region token nil lazygithub-token-file)
-  token)
+  (add-to-list 'lazygit-token-alist `("GitHub" . ,token))
+  (write-region (format "%S" lazygit-token-alist) nil lazygit-token-file)
+  (concat "token " (cdr (assoc "GitHub" lazygit-token-alist))))
 
 ;;;###autoload
 (defun lazygithub-token-p ()
-  "Check it `lazygithub-token-file' exists and is non-empty."
-  (if (and (file-readable-p lazygithub-token-file)
-           (file-regular-p lazygithub-token-file))
-      (lazygit-read-file lazygithub-token-file)
+  "Check it `lazygit-token-file' exists and is non-empty."
+  (if (and (file-readable-p lazygit-token-file)
+           (file-regular-p lazygit-token-file)
+           (lazygit-read-alist-from-file lazygit-token-file)
+           (assoc "GitHub" (lazygit-read-alist-from-file lazygit-token-file)))
+      (concat "token "
+              (cdr (assoc "GitHub" (lazygit-read-alist-from-file lazygit-token-file))))
     (call-interactively #'lazygithub-install-token)))
 
 (defvar lazygithub-baseurl "https://api.github.com/")
@@ -76,20 +79,20 @@
                       `(("Authorization" . ,(lazygithub-token-p)))))
 
 ;;;###autoload
-(defun lazygithub-clone-or-pull-repo (directory)
-  "Clone or pull repository to DIRECTORY."
-  (interactive "DDirectory to clone GitHub repo to: ")
+(defun lazygithub-clone-or-pull-repo ()
+  "Clone or pull repository to `lazygitlab-directory'."
+  (interactive)
   (lazygit-clone-or-pull-repo (lazygithub-get-values "user/repos" (list 'full_name
                                                                         'name
                                                                         'ssh_url))
-                              'full_name 'name 'ssh_url directory))
+                              'full_name 'name 'ssh_url lazygithub-directory))
 
 ;;;###autoload
-(defun lazygithub-clone-or-pull-all (directory)
-  "Clone or pull ALL GitHub repositories to DIRECTORY."
-  (interactive "DDirectory to clone ALL GitHub repos to: ")
+(defun lazygithub-clone-or-pull-all ()
+  "Clone or pull ALL GitHub repositories to `lazygitlab-directory'."
+  (interactive)
   (let ((repos (lazygithub-get-values "user/repos" (list 'full_name 'ssh_url))))
-    (lazygit-clone-or-pull-batch repos directory 'full_name 'ssh_url)))
+    (lazygit-clone-or-pull-batch repos lazygithub-directory 'full_name 'ssh_url)))
 
 (provide 'lazygithub)
 ;; Local Variables:

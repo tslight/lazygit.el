@@ -36,29 +36,32 @@
 ;; Copyright (C) 2020 Toby Slight
 ;; Author: Toby Slight tslight@pm.me
 ;; URL: https://github.com/purcell/package-lint
-;; Package-Requires: ((emacs "24.4"))
+;; Package-Requires: ((Emacs "24.4"))
 
 ;;; Code:
 (require 'lazygit)
 
-(defcustom lazygitlab-token-file (concat user-emacs-directory ".gitlab.token")
-  "File to store `GitLab' API Personal Access Token in."
-  :group 'lazygit-tokens
-  :type 'file)
+(defcustom lazygitlab-directory (expand-file-name "~/src/gitlab")
+  "File to store API Personal Access Tokens in."
+  :group 'lazygit
+  :type 'directory)
 
 ;;;###autoload
 (defun lazygitlab-install-token (token)
   "Prompt for `GitLab' TOKEN and write it to `lazygitlab-token-file'."
   (interactive "sEnter your GitLab Personal Access Token: ")
-  (write-region token nil lazygitlab-token-file)
-  token)
+  (add-to-list 'lazygit-token-alist `("GitLab" . ,token))
+  (write-region (format "%S" lazygit-token-alist) nil lazygit-token-file)
+  (cdr (assoc "GitLab" lazygit-token-alist)))
 
 ;;;###autoload
 (defun lazygitlab-token-p ()
-  "Check it `lazygitlab-token-file' exists and is non-empty."
-  (if (and (file-readable-p lazygitlab-token-file)
-           (file-regular-p lazygitlab-token-file))
-      (lazygit-read-file lazygitlab-token-file)
+  "Check it `lazygit-token-file' exists and is non-empty."
+  (if (and (file-readable-p lazygit-token-file)
+           (file-regular-p lazygit-token-file)
+           (lazygit-read-alist-from-file lazygit-token-file)
+           (assoc "GitLab" (lazygit-read-alist-from-file lazygit-token-file)))
+      (cdr (assoc "GitLab" (lazygit-read-alist-from-file lazygit-token-file)))
     (call-interactively #'lazygitlab-install-token)))
 
 (defvar lazygitlab-baseurl "https://gitlab.com/api/v4/")
@@ -80,9 +83,9 @@
                       `(("PRIVATE-TOKEN" . ,(lazygitlab-token-p)))))
 
 ;;;###autoload
-(defun lazygitlab-clone-or-pull-project (directory)
-  "Clone or pull repository to DIRECTORY."
-  (interactive "DDirectory to clone GitLab project to: ")
+(defun lazygitlab-clone-or-pull-project ()
+  "Clone or pull repository to `lazygitlab-directory'."
+  (interactive)
   (lazygit-clone-or-pull-repo
    (lazygitlab-get-values "projects" (list 'path_with_namespace
                                            'name
@@ -90,7 +93,7 @@
    'path_with_namespace
    'name
    'ssh_url_to_repo
-   directory))
+   lazygitlab-directory))
 
 ;;;###autoload
 (defun lazygitlab-subgroups (groups prefix)
@@ -119,27 +122,27 @@
                     ids)))))
 
 ;;;###autoload
-(defun lazygitlab-clone-or-pull-group (directory)
-  "Prompt for a group, then clone that repository to DIRECTORY."
-  (interactive "DDirectory to clone GitLab group to: ")
+(defun lazygitlab-clone-or-pull-group ()
+  "Prompt for a group, then clone that repository to `lazygitlab-directory'."
+  (interactive)
   (let* ((groups (lazygitlab-get-values "groups" (list 'full_path 'id)))
          (paths (mapcar (lambda (g) (cdr (assoc 'full_path g))) groups))
          (choice (completing-read "Group or subgroup to batch clone: " paths))
          (groups (lazygitlab-subgroups groups choice))
          (projects (lazygitlab-group-projects groups)))
     (lazygit-clone-or-pull-batch projects
-                                 directory
+                                 lazygitlab-directory
                                  'path_with_namespace
                                  'ssh_url_to_repo)))
 
 ;;;###autoload
-(defun lazygitlab-clone-or-pull-all (directory)
-  "Clone or pull ALL projects to DIRECTORY."
-  (interactive "DDirectory to clone ALL GitLab projects to: ")
+(defun lazygitlab-clone-or-pull-all ()
+  "Clone or pull ALL projects to `lazygitlab-directory'."
+  (interactive)
   (let ((projects (lazygitlab-get-values "projects"
                                          (list 'path_with_namespace 'ssh_url_to_repo))))
     (lazygit-clone-or-pull-batch projects
-                                 directory
+                                 lazygitlab-directory
                                  'path_with_namespace
                                  'ssh_url_to_repo)))
 

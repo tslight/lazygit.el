@@ -7,27 +7,40 @@
 ;; Copyright (C) 2020 Toby Slight
 ;; Author: Toby Slight tslight@pm.me
 ;; URL: https://github.com/purcell/package-lint
-;; Package-Requires: ((emacs "24.4"))
+;; Package-Requires: ((Emacs "24.4"))
 
 ;;; Code:
 
 (require 'json)
 (require 'url)
 
-(defgroup lazygit-tokens nil
-  "API keys."
+(defgroup lazygit nil
+  "LazyGit configuration."
   :group 'convenience)
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;                            Utility Functions                              ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(defcustom lazygit-token-file (concat user-emacs-directory ".lazygit.tokens")
+  "File to store API Personal Access Tokens in."
+  :group 'lazygit
+  :type 'file)
+
+(defcustom lazygit-token-alist 'nil
+  "Association list to store tokens in."
+  :group 'lazygit
+  :type '(alist))
 
 ;;;###autoload
 (defun lazygit-read-file (file)
   "Return FILE content as a string."
   (with-temp-buffer
     (insert-file-contents file)
-    (buffer-string)))
+    (if (not (string= "" (buffer-string)))
+        (buffer-string))))
+
+;;;###autoload
+(defun lazygit-read-alist-from-file (file)
+  "Return FILE content as an alist."
+  (if (lazygit-read-file file)
+      (car (read-from-string (lazygit-read-file file)))))
 
 ;;;###autoload
 (defun lazygit-filter-keys (list keys)
@@ -64,10 +77,6 @@
   "Run COMMAND asynchronously and output results to `minibuffer'."
   (set-process-sentinel (start-process-shell-command command nil command)
                         #'lazygit-message-sentinel-output))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;                            URL/API Functions                              ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;###autoload
 (defun lazygit-link-to-next-page ()
@@ -126,10 +135,6 @@ Results will be pretty printed in a buffer, and if
   "Retrieve values from KEYS from a list of URL JSON objects."
   (let ((response (lazygit-parse-retrieved-json url headers)))
     (lazygit-filter-keys response keys)))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;                            Git Functions                                  ;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 ;;;###autoload
 (defun lazygit-repo-p (directory)
