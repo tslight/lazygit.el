@@ -46,12 +46,14 @@
   :group 'lazygit-tokens
   :type 'file)
 
+;;;###autoload
 (defun lazygitlab-install-token (token)
   "Prompt for `GitLab' TOKEN and write it to `lazygitlab-token-file'."
   (interactive "sEnter your GitLab Personal Access Token: ")
   (write-region token nil lazygitlab-token-file)
   token)
 
+;;;###autoload
 (defun lazygitlab-token-p ()
   "Check it `lazygitlab-token-file' exists and is non-empty."
   (if (and (file-readable-p lazygitlab-token-file)
@@ -62,6 +64,7 @@
 (defvar lazygitlab-baseurl "https://gitlab.com/api/v4/")
 (defvar lazygitlab-attr "?pagination=keyset&per_page=100&order_by=id&sort=asc&membership=true")
 
+;;;###autoload
 (defun lazygitlab-retriever (endpoint)
   "Retrieve resources from `GitLab' ENDPOINT."
   (interactive "sEnter GitLab API endpoint: ")
@@ -69,12 +72,14 @@
                                "*lazygitlab*"
                                `(("PRIVATE-TOKEN" . ,(lazygitlab-token-p)))))
 
+;;;###autoload
 (defun lazygitlab-get-values (endpoint keys)
   "Retrieve values from KEYS of `GitLab' ENDPOINT JSON resources."
   (lazygit-get-values (concat lazygitlab-baseurl endpoint lazygitlab-attr)
                       keys
                       `(("PRIVATE-TOKEN" . ,(lazygitlab-token-p)))))
 
+;;;###autoload
 (defun lazygitlab-clone-or-pull-project (directory)
   "Clone or pull repository to DIRECTORY."
   (interactive "DDirectory to clone GitLab project to: ")
@@ -87,6 +92,7 @@
    'ssh_url_to_repo
    directory))
 
+;;;###autoload
 (defun lazygitlab-subgroups (groups prefix)
   "Return a list of subgroups from GROUPS using PREFIX."
   (remove nil
@@ -97,6 +103,7 @@
                  g))
            groups)))
 
+;;;###autoload
 (defun lazygitlab-group-projects (groups)
   "Return a list of projects from GROUPS."
   (let ((ids (mapcar (lambda (g) (cdr (assoc 'id g))) groups)))
@@ -111,6 +118,7 @@
                              'ssh_url_to_repo)))
                     ids)))))
 
+;;;###autoload
 (defun lazygitlab-clone-or-pull-group (directory)
   "Prompt for a group, then clone that repository to DIRECTORY."
   (interactive "DDirectory to clone GitLab group to: ")
@@ -124,6 +132,7 @@
                                  'path_with_namespace
                                  'ssh_url_to_repo)))
 
+;;;###autoload
 (defun lazygitlab-clone-or-pull-all (directory)
   "Clone or pull ALL projects to DIRECTORY."
   (interactive "DDirectory to clone ALL GitLab projects to: ")

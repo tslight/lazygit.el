@@ -42,12 +42,14 @@
   :group 'lazygit-tokens
   :type 'file)
 
+;;;###autoload
 (defun lazygithub-install-token (token)
   "Prompt for GitHub TOKEN and write it to `lazygithub-token-file'."
   (interactive "sEnter your GitHub Personal Access Token: ")
   (write-region token nil lazygithub-token-file)
   token)
 
+;;;###autoload
 (defun lazygithub-token-p ()
   "Check it `lazygithub-token-file' exists and is non-empty."
   (if (and (file-readable-p lazygithub-token-file)
@@ -58,6 +60,7 @@
 (defvar lazygithub-baseurl "https://api.github.com/")
 (defvar lazygithub-attr "?per_page=100&page=1")
 
+;;;###autoload
 (defun lazygithub-retriever (endpoint)
   "Retrieve resources from GitHub ENDPOINT."
   (interactive "sEnter a GitHub API endpoint: ")
@@ -65,12 +68,14 @@
                                "*lazygithub*"
                                `(("Authorization" . ,(lazygithub-token-p)))))
 
+;;;###autoload
 (defun lazygithub-get-values (endpoint keys)
   "Retrieve values from KEYS of GitHub ENDPOINT JSON resources."
   (lazygit-get-values (concat lazygithub-baseurl endpoint lazygithub-attr)
                       keys
                       `(("Authorization" . ,(lazygithub-token-p)))))
 
+;;;###autoload
 (defun lazygithub-clone-or-pull-repo (directory)
   "Clone or pull repository to DIRECTORY."
   (interactive "DDirectory to clone GitHub repo to: ")
@@ -79,6 +84,7 @@
                                                                         'ssh_url))
                               'full_name 'name 'ssh_url directory))
 
+;;;###autoload
 (defun lazygithub-clone-or-pull-all (directory)
   "Clone or pull ALL GitHub repositories to DIRECTORY."
   (interactive "DDirectory to clone ALL GitHub repos to: ")
