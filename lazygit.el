@@ -20,16 +20,19 @@
   :group 'convenience)
 
 (defun lazygit-secret-from-authinfo (host)
-  (let* ((save-function (plist-get
+  (let* ((auth-source-creation-prompts '((secret . "Enter %h API token: ")))
+         (save-function (plist-get
                          (car (auth-source-search
                                :max 1
                                :host host
+                               :user "api-token"
                                :create t))
                          :save-function))
          (secret (plist-get
                   (car (auth-source-search
                         :max 1
                         :host host
+                        :user "api-token"
                         :create t))
                   :secret)))
     (if (functionp save-function)
