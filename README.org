@@ -46,17 +46,27 @@ or ~$HOME/.authinfo.gpg~.
 If you want GitHub access:
 
 #+begin_src emacs-lisp
-  (add-to-list 'load-path "/path/to/where/you/cloned/this/repo")
-  (require 'lazygithub)
+  (add-to-list 'load-path (expand-file-name "~/src/gitlab/tspub/lisp/lazygit"))
+
+  (with-eval-after-load 'lazygithub
+    (setq lazygit-directory (expand-file-name "~/src/github"))
+    (message "Lazy loaded lazygithub :-)"))
+
+  (autoload 'lazygithub-clone-or-pull-repo "lazygithub" nil t)
+  (global-set-key (kbd "C-c g h r") 'lazygithub-clone-or-pull-repo)
 #+end_src
 
 If you want GitLab access:
 
 #+begin_src emacs-lisp
-  (add-to-list 'load-path "/path/to/where/you/cloned/this/repo")
+  (add-to-list 'load-path (expand-file-name "~/src/gitlab/tspub/lisp/lazygit"))
+
   (with-eval-after-load 'lazygitlab
-    (setq lazygit-directory (expand-file-name "~/src/gitlab")))
-  (global-set-key (kbd "C-c g l a") 'lazygitlab-clone-or-pull-all)
+    (setq lazygit-directory (expand-file-name "~/src/gitlab"))
+    (message "Lazy loaded lazygitlab :-)"))
+
+  (autoload 'lazygitlab-clone-or-pull-project "lazygitlab" nil t)
+  (global-set-key (kbd "C-c g l p") 'lazygitlab-clone-or-pull-project)
 #+end_src
 
 *** Use Package
