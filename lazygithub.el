@@ -23,16 +23,15 @@
 ;; You will be asked to enter your Personal Access Token the first time you
 ;; run a command.
 
-;; Generate a this here: https://github.com/settings/tokens.
+;; Generate this here: https://github.com/settings/tokens.
 
-;; By default these tokens will be stored in $HOME/.emacs.d/.github.token and
-;; $HOME/.emacs.d/.github.token, however these locations can be customised with
-;; `customize' or `setq'.
+;; I'm using `auth-source' to retrieve and store this token in ~/.authinfo or
+;; ~/.authinfo.gpg
 
 ;; Copyright (C) 2020 Toby Slight
 ;; Author: Toby Slight tslight@pm.me
-;; URL: https://github.com/purcell/package-lint
-;; Package-Requires: ((emacs "24.4"))
+;; URL: https://github.com/tslight/lazygit.el
+;; Package-Requires: ((emacs "27.1"))
 
 ;;; Code:
 (require 'lazygit)
@@ -42,24 +41,6 @@
   :group 'lazygit
   :type 'directory)
 
-(defun lazygithub-install-token (token)
-  "Prompt for `GitHub' TOKEN and write it to `lazygithub-token-file'."
-  (interactive "sEnter your GitHub Personal Access Token: ")
-  (add-to-list 'lazygit-token-alist `("GitHub" . ,token))
-  (write-region (format "%S" lazygit-token-alist) nil lazygit-token-file)
-  (concat "token " (cdr (assoc "GitHub" lazygit-token-alist))))
-
-;;;###autoload
-(defun lazygithub-token-p ()
-  "Check it `lazygit-token-file' exists and is non-empty."
-  (if (and (file-readable-p lazygit-token-file)
-           (file-regular-p lazygit-token-file)
-           (lazygit-read-alist-from-file lazygit-token-file)
-           (assoc "GitHub" (lazygit-read-alist-from-file lazygit-token-file)))
-      (concat "token "
-              (cdr (assoc "GitHub" (lazygit-read-alist-from-file lazygit-token-file))))
-    (call-interactively #'lazygithub-install-token)))
-
 (defvar lazygithub-baseurl "https://api.github.com/")
 (defvar lazygithub-attr "?per_page=100&page=1")
 
@@ -67,16 +48,18 @@
 (defun lazygithub-retriever (endpoint)
   "Retrieve resources from GitHub ENDPOINT."
   (interactive "sEnter a GitHub API endpoint: ")
-  (lazygit-view-retrieved-json (concat lazygithub-baseurl endpoint lazygithub-attr)
-                               "*lazygithub*"
-                               `(("Authorization" . ,(lazygithub-token-p)))))
+  (lazygit-view-retrieved-json
+   (concat lazygithub-baseurl endpoint lazygithub-attr)
+   "*lazygithub*"
+   `(("Authorization" . ,(concat "token " (lazygit-secret-from-authinfo "github.com"))))))
 
 ;;;###autoload
 (defun lazygithub-get-values (endpoint keys)
   "Retrieve values from KEYS of GitHub ENDPOINT JSON resources."
-  (lazygit-get-values (concat lazygithub-baseurl endpoint lazygithub-attr)
-                      keys
-                      `(("Authorization" . ,(lazygithub-token-p)))))
+  (lazygit-get-values
+   (concat lazygithub-baseurl endpoint lazygithub-attr)
+   keys
+   `(("Authorization" . ,(concat "token " (lazygit-secret-from-authinfo "github.com"))))))
 
 ;;;###autoload
 (defun lazygithub-clone-or-pull-repo ()

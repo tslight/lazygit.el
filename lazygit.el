@@ -11,6 +11,7 @@
 
 ;;; Code:
 
+(require 'auth-source)
 (require 'json)
 (require 'url)
 
@@ -18,29 +19,23 @@
   "LazyGit configuration."
   :group 'convenience)
 
-(defcustom lazygit-token-file (concat user-emacs-directory ".lazygit.tokens")
-  "File to store API Personal Access Tokens in."
-  :group 'lazygit
-  :type 'file)
-
-(defcustom lazygit-token-alist 'nil
-  "Association list to store tokens in."
-  :group 'lazygit
-  :type '(alist))
-
-;;;###autoload
-(defun lazygit-read-file (file)
-  "Return FILE content as a string."
-  (with-temp-buffer
-    (insert-file-contents file)
-    (if (not (string= "" (buffer-string)))
-        (buffer-string))))
-
-;;;###autoload
-(defun lazygit-read-alist-from-file (file)
-  "Return FILE content as an alist."
-  (if (lazygit-read-file file)
-      (car (read-from-string (lazygit-read-file file)))))
+(defun lazygit-secret-from-authinfo (host)
+  (let* ((save-function (plist-get
+                         (car (auth-source-search
+                               :max 1
+                               :host host
+                               :create t))
+                         :save-function))
+         (secret (plist-get
+                  (car (auth-source-search
+                        :max 1
+                        :host host
+                        :create t))
+                  :secret)))
+    (if (functionp save-function)
+        (funcall save-function))
+    (if (functionp secret)
+        (funcall secret))))
 
 ;;;###autoload
 (defun lazygit-filter-keys (list keys)

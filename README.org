@@ -38,71 +38,56 @@ Generate a *GitHub* /Personal Access Token/ [[https://github.com/settings/tokens
 
 Generate a *GitLab* /Personal Access Token/ [[https://gitlab.com/profile/personal_access_tokens][here]].
 
-By default these tokens will be stored in ~$HOME/.emacs.d/.gitlab.token~ and
-~$HOME/.emacs.d/.github.token~, however these locations can be customised with
-~customize~ or ~setq~.
+I'm using ~auth-source~ to retrieve and store this token in ~~/.authinfo~ or
+~~/.authinfo.gpg~.
 
 ** Configuration
 
-If you just want GitHub access:
+If you want GitHub access:
 
 #+begin_src emacs-lisp
   (add-to-list 'load-path "/path/to/where/you/cloned/this/repo")
   (require 'lazygithub)
-  ;; optionally change the default personal access token location
-  (setq lazygithub-token-file "~/.github.key")
 #+end_src
 
-If you just want GitLab access:
+If you want GitLab access:
 
 #+begin_src emacs-lisp
   (add-to-list 'load-path "/path/to/where/you/cloned/this/repo")
-  (require 'lazygitlab)
-  ;; optionally change the default personal access token location
-  (setq lazygitlab-token-file "~/.gitlab.key")
-#+end_src
-
-If you want both GitHub & GitLab access:
-
-#+begin_src emacs-lisp
-  (add-to-list 'load-path "/path/to/where/you/cloned/this/repo")
-  (require 'lazygit)
-  ;; optionally change the default personal access tokens locations
-  (setq lazygitlab-token-file "~/.gitlab.key")
-  (setq lazygithub-token-file "~/.github.key")
+  (with-eval-after-load 'lazygitlab
+    (setq lazygit-directory (expand-file-name "~/src/gitlab")))
+  (global-set-key (kbd "C-c g l a") 'lazygitlab-clone-or-pull-all)
 #+end_src
 
 *** Use Package
 
 #+begin_src emacs-lisp
   (use-package lazygit
-    :load-path "/path/to/cloned/repo")
+               :load-path "/path/to/cloned/repo")
 
   (use-package lazygitlab
-    :after lazygit
-    :bind
-    ("C-c g l a" . lazygitlab-clone-or-pull-all)
-    ("C-c g l c" . lazygitlab-clone-or-pull-project)
-    ("C-c g l g" . lazygitlab-clone-or-pull-group)
-    ("C-c g l r" . lazygitlab-retriever)
-    :config
-    (setq lazygitlab-token-file "~/.gitlab.key")
-    (defalias 'gl/api 'lazygitlab-retriever)
-    (defalias 'gl/all 'lazygitlab-clone-or-pull-all)
-    (defalias 'gl/grp 'lazygitlab-clone-or-pull-group)
-    (defalias 'gl/repo 'lazygitlab-clone-or-pull-project))
+               :after lazygit
+               :bind
+               ("C-c g l a" . lazygitlab-clone-or-pull-all)
+               ("C-c g l c" . lazygitlab-clone-or-pull-project)
+               ("C-c g l g" . lazygitlab-clone-or-pull-group)
+               ("C-c g l r" . lazygitlab-retriever)
+               :config
+               (defalias 'gl/api 'lazygitlab-retriever)
+               (defalias 'gl/all 'lazygitlab-clone-or-pull-all)
+               (defalias 'gl/grp 'lazygitlab-clone-or-pull-group)
+               (defalias 'gl/repo 'lazygitlab-clone-or-pull-project))
 
   (use-package lazygithub
-    :after lazygit
-    :bind
-    ("C-c g h a" . lazygithub-clone-or-pull-all)
-    ("C-c g h c" . lazygithub-clone-or-pull-repo)
-    ("C-c g h r" . lazygithub-retriever)
-    :config
-    (setq lazygithub-token-file "~/.github.key")
-    (defalias 'gh/api 'lazygithub-retriever)
-    (defalias 'gh/all 'lazygithub-clone-or-pull-all)
-    (defalias 'gh/repo 'lazygithub-clone-or-pull-repo))
+               :after lazygit
+               :bind
+               ("C-c g h a" . lazygithub-clone-or-pull-all)
+               ("C-c g h c" . lazygithub-clone-or-pull-repo)
+               ("C-c g h r" . lazygithub-retriever)
+               :config
+               (defalias 'gh/api 'lazygithub-retriever)
+               (defalias 'gh/all 'lazygithub-clone-or-pull-all)
+               (defalias 'gh/repo 'lazygithub-clone-or-pull-repo))
 #+end_src
 
 ** Screenshots

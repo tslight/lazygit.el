@@ -29,40 +29,21 @@
 
 ;; Generate a this here: https://gitlab.com/profile/personal_access_tokens
 
-;; By default these tokens will be stored in $HOME/.emacs.d/.gitlab.token and
-;; $HOME/.emacs.d/.github.token, however these locations can be customised with
-;; `customize' or `setq'.
+;; I'm using `auth-source' to retrieve and store this token in ~/.authinfo or
+;; ~/.authinfo.gpg
 
 ;; Copyright (C) 2020 Toby Slight
 ;; Author: Toby Slight tslight@pm.me
-;; URL: https://github.com/purcell/package-lint
-;; Package-Requires: ((Emacs "24.4"))
+;; URL: https://github.com/tslight/lazygit.el
+;; Package-Requires: ((Emacs "27.1"))
 
 ;;; Code:
 (require 'lazygit)
 
 (defcustom lazygitlab-directory (expand-file-name "~/src/gitlab")
-  "File to store API Personal Access Tokens in."
+  "Directory to clone projects to."
   :group 'lazygit
   :type 'directory)
-
-;;;###autoload
-(defun lazygitlab-install-token (token)
-  "Prompt for `GitLab' TOKEN and write it to `lazygitlab-token-file'."
-  (interactive "sEnter your GitLab Personal Access Token: ")
-  (add-to-list 'lazygit-token-alist `("GitLab" . ,token))
-  (write-region (format "%S" lazygit-token-alist) nil lazygit-token-file)
-  (cdr (assoc "GitLab" lazygit-token-alist)))
-
-;;;###autoload
-(defun lazygitlab-token-p ()
-  "Check it `lazygit-token-file' exists and is non-empty."
-  (if (and (file-readable-p lazygit-token-file)
-           (file-regular-p lazygit-token-file)
-           (lazygit-read-alist-from-file lazygit-token-file)
-           (assoc "GitLab" (lazygit-read-alist-from-file lazygit-token-file)))
-      (cdr (assoc "GitLab" (lazygit-read-alist-from-file lazygit-token-file)))
-    (call-interactively #'lazygitlab-install-token)))
 
 (defvar lazygitlab-baseurl "https://gitlab.com/api/v4/")
 (defvar lazygitlab-attr "?pagination=keyset&per_page=100&order_by=id&sort=asc&membership=true")
@@ -71,16 +52,18 @@
 (defun lazygitlab-retriever (endpoint)
   "Retrieve resources from `GitLab' ENDPOINT."
   (interactive "sEnter GitLab API endpoint: ")
-  (lazygit-view-retrieved-json (concat lazygitlab-baseurl endpoint lazygitlab-attr)
-                               "*lazygitlab*"
-                               `(("PRIVATE-TOKEN" . ,(lazygitlab-token-p)))))
+  (lazygit-view-retrieved-json
+   (concat lazygitlab-baseurl endpoint lazygitlab-attr)
+   "*lazygitlab*"
+   `(("PRIVATE-TOKEN" . ,(lazygit-secret-from-authinfo "gitlab.com")))))
 
 ;;;###autoload
 (defun lazygitlab-get-values (endpoint keys)
   "Retrieve values from KEYS of `GitLab' ENDPOINT JSON resources."
-  (lazygit-get-values (concat lazygitlab-baseurl endpoint lazygitlab-attr)
-                      keys
-                      `(("PRIVATE-TOKEN" . ,(lazygitlab-token-p)))))
+  (lazygit-get-values
+   (concat lazygitlab-baseurl endpoint lazygitlab-attr)
+   keys
+   `(("PRIVATE-TOKEN" . ,(lazygit-secret-from-authinfo "gitlab.com")))))
 
 ;;;###autoload
 (defun lazygitlab-clone-or-pull-project ()
