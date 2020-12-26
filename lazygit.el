@@ -202,8 +202,14 @@ Using PATH, NAME & URL."
     (delete-dups git-repos)))
 
 ;;;###autoload
+(defun lazygit-delete-buffer ()
+  (when (get-buffer "*lazygit*")
+    (kill-buffer "*lazygit*")))
+
+;;;###autoload
 (defun lazygit-pull-all ()
   (interactive)
+  (lazygit-delete-buffer)
   (mapc (lambda (directory)
           (lazygit-command directory "pull --stat --quiet"))
         (lazygit-repos-recursive "~" 12)))
@@ -211,6 +217,7 @@ Using PATH, NAME & URL."
 ;;;###autoload
 (defun lazygit-status-all ()
   (interactive)
+  (lazygit-delete-buffer)
   (mapc (lambda (directory)
           (lazygit-command directory "status --porcelain"))
         (lazygit-repos-recursive "~" 12)))
