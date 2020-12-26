@@ -131,7 +131,7 @@
                    (list 'path_with_namespace 'ssh_url_to_repo))))
     (lazygit-command-batch projects
                            lazygitlab-directory
-                           'path_with_namespace "status")))
+                           'path_with_namespace "status --porcelain")))
 
 (provide 'lazygitlab)
 ;; Local Variables:

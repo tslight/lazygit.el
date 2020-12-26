@@ -138,14 +138,13 @@ Results will be pretty printed in a buffer."
 ;;;###autoload
 (defun lazygit-command (directory command)
   "Run a git COMMAND in DIRECTORY."
-  (lazygit-message-async-shell-command
-   (concat "git -C " directory " " command " --porcelain")))
+  (lazygit-message-async-shell-command (concat "git -C " directory " " command)))
 
 ;;;###autoload
 (defun lazygit-clone-or-pull (directory url)
   "Clone or pull a git repository from URL to DIRECTORY."
   (if (lazygit-repo-p directory)
-      (lazygit-command directory "pull")
+      (lazygit-command directory "pull --stat --quiet")
     (lazygit-message-async-shell-command (concat "git clone " url " " directory))))
 
 ;;;###autoload
@@ -177,6 +176,44 @@ Using PATH, NAME & URL."
           (lazygit-command
            (concat directory "/" (cdr (assoc pathkey r))) command))
         repos))
+
+;;;###autoload
+(defun lazygit-repos-recursive (directory maxdepth)
+  "List git repos in under DIRECTORY recursively to MAXDEPTH."
+  (let* ((git-repos '())
+         (current-directory-list
+          (directory-files directory t directory-files-no-dot-files-regexp)))
+    ;; while we are in the current directory
+    (if (lazygit-repo-p directory)
+        (setq git-repos (cons (file-truename (expand-file-name directory)) git-repos)))
+    (while current-directory-list
+      (let ((f (car current-directory-list)))
+        (cond ((and (file-directory-p f)
+                    (file-readable-p f)
+                    (> maxdepth 0)
+                    (not (lazygit-repo-p f)))
+               (setq git-repos
+                     (append git-repos
+                             (lazygit-repos-recursive f (- maxdepth 1)))))
+              ((lazygit-repo-p f)
+               (setq git-repos (cons
+                                (file-truename (expand-file-name f)) git-repos))))
+        (setq current-directory-list (cdr current-directory-list))))
+    (delete-dups git-repos)))
+
+;;;###autoload
+(defun lazygit-pull-all ()
+  (interactive)
+  (mapc (lambda (directory)
+          (lazygit-command directory "pull --stat --quiet"))
+        (lazygit-repos-recursive "~" 12)))
+
+;;;###autoload
+(defun lazygit-status-all ()
+  (interactive)
+  (mapc (lambda (directory)
+          (lazygit-command directory "status --porcelain"))
+        (lazygit-repos-recursive "~" 12)))
 
 (provide 'lazygit)
 ;; Local Variables:
