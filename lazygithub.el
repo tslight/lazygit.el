@@ -8,17 +8,11 @@
 ;; list of repositories available to the authenticated user, with
 ;; lazygithub/clone-or-pull-repo.
 
-;; If `magit' is installed, this will be used, otherwise we shell out to git,
-;; so obviously, that needs to be installed on your system.
-
 ;; You can also clone or pull all repositories in one fail swoop with
-;; lazygithub/clone-or-pull-all.  This will not use `magit', unless called with
-;; prefix argument.
+;; lazygithub/clone-or-pull-all.
 
-;; lazygithub/retriever allows arbitrary querying of endpoints.  If
-;; `json-navigator' is installed, the JSON results will be opened in a fancy
-;; tree hiearchy browser.  If not, you can view the JSON results pretty printed
-;; in a dedicated buffer.
+;; lazygithub/retriever allows arbitrary querying of endpoints.  You can view
+;; the JSON results pretty printed in a dedicated buffer.
 
 ;; You will be asked to enter your Personal Access Token the first time you
 ;; run a command.

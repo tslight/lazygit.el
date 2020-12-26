@@ -8,21 +8,14 @@
 ;; list of repositories available to the authenticated user, with
 ;; lazygitlab-clone-or-pull-repo.
 
-;; If `magit' is installed, this will be used, otherwise we shell out to git,
-;; so obviously, that needs to be installed on your system.
-
 ;; You can clone or pull all repositories in one fail swoop with
-;; lazygitlab-clone-or-pull-all.  This will not use `magit', unless called with
-;; prefix argument.
+;; lazygitlab-clone-or-pull-all.
 
 ;; You can also clone or pull all the repositories under a given group with
-;; lazygitlab-clone-or-pull-group.  This will not use `magit', unless called with
-;; prefix argument.
+;; lazygitlab-clone-or-pull-group.
 
-;; lazygitlab-retriever allows arbitrary querying of endpoints.  If
-;; `json-navigator' is installed, the JSON results will be opened in a fancy
-;; tree hiearchy browser.  If not, you can view the JSON results pretty printed
-;; in a dedicated buffer.
+;; lazygitlab-retriever allows arbitrary querying of endpoints.  You can view
+;; the JSON results pretty printed in a dedicated buffer.
 
 ;; You will be asked to enter your Personal Access Token the first time you
 ;; run a command.
@@ -128,6 +121,17 @@
                                  lazygitlab-directory
                                  'path_with_namespace
                                  'ssh_url_to_repo)))
+
+;;;###autoload
+(defun lazygitlab-status-all ()
+  "View status of all projects in `lazygitlab-directory'."
+  (interactive)
+  (let ((projects (lazygitlab-get-values
+                   "projects"
+                   (list 'path_with_namespace 'ssh_url_to_repo))))
+    (lazygit-command-batch projects
+                           lazygitlab-directory
+                           'path_with_namespace "status")))
 
 (provide 'lazygitlab)
 ;; Local Variables:

@@ -6,18 +6,15 @@
 
 ;; Copyright (C) 2020 Toby Slight
 ;; Author: Toby Slight tslight@pm.me
-;; URL: https://github.com/purcell/package-lint
-;; Package-Requires: ((Emacs "24.4"))
+;; URL: https://github.com/tslight/lazygit.el
+;; Package-Requires: ((Emacs "27.1"))
 
 ;;; Code:
-
 (require 'auth-source)
 (require 'json)
 (require 'url)
 
-(defgroup lazygit nil
-  "LazyGit configuration."
-  :group 'convenience)
+(defgroup lazygit nil "LazyGit configuration." :group 'convenience)
 
 (defun lazygit-secret-from-authinfo (host)
   (let* ((auth-source-creation-prompts '((secret . "Enter %h API token: ")))
@@ -43,11 +40,7 @@
 ;;;###autoload
 (defun lazygit-filter-keys (list keys)
   "Filter a LIST of association lists by a list of KEYS."
-  (mapcar (lambda (al)
-            (mapcar (lambda (key)
-                      (assoc key al))
-                    keys))
-          list))
+  (mapcar (lambda (al) (mapcar (lambda (key) (assoc key al)) keys)) list))
 
 ;;;###autoload
 (defun lazygit-get-assoc-list (list key value)
@@ -63,18 +56,6 @@
     (json-encode-list (mapcan
                        #'json-read-from-string
                        json-arrays))))
-
-;;;###autoload
-(defun lazygit-message-sentinel-output (process msg)
-  "Write output of PROCESS with MSG."
-  (when (memq (process-status process) '(exit signal))
-    (message (string-trim (concat (process-name process) " " msg)))))
-
-;;;###autoload
-(defun lazygit-message-async-shell-command (command)
-  "Run COMMAND asynchronously and output results to `minibuffer'."
-  (set-process-sentinel (start-process-shell-command command nil command)
-                        #'lazygit-message-sentinel-output))
 
 ;;;###autoload
 (defun lazygit-link-to-next-page ()
@@ -115,18 +96,14 @@ Optional HEADERS can be specified."
 ;;;###autoload
 (defun lazygit-view-retrieved-json (url buffer &optional headers)
   "View the JSON retrieved from URL, with optional HEADERS, in BUFFER.
-Results will be pretty printed in a buffer, and if
-`json-navigator' is installed will be viewed opened in that."
+Results will be pretty printed in a buffer."
   (let ((items (lazygit-retrieve-paginated-bodies url headers)))
     (switch-to-buffer buffer)
     (erase-buffer)
     (insert (lazygit-flatten-json items))
     (json-pretty-print-buffer)
     (goto-char (point-min))
-    (if (fboundp 'json-mode) (json-mode))
-    (if (fboundp 'json-navigator-navigate-after-point)
-        (progn (json-navigator-navigate-after-point)
-               (execute-kbd-macro (kbd "<return>"))))))
+    (if (fboundp 'json-mode) (json-mode))))
 
 ;;;###autoload
 (defun lazygit-get-values (url keys &optional headers)
@@ -137,34 +114,39 @@ Results will be pretty printed in a buffer, and if
 ;;;###autoload
 (defun lazygit-repo-p (directory)
   "Return non-nil if there is a git repository in DIRECTORY."
-  (and
-   (file-directory-p (concat directory "/.git"))
-   (file-directory-p (concat directory "/.git/info"))
-   (file-directory-p (concat directory "/.git/objects"))
-   (file-directory-p (concat directory "/.git/refs"))
-   (file-regular-p (concat directory "/.git/HEAD"))))
+  (and (file-directory-p (concat directory "/.git"))
+       (file-directory-p (concat directory "/.git/info"))
+       (file-directory-p (concat directory "/.git/objects"))
+       (file-directory-p (concat directory "/.git/refs"))
+       (file-regular-p (concat directory "/.git/HEAD"))))
 
 ;;;###autoload
-(defun lazygit-clone-or-pull (directory url &optional with-magit)
-  "Clone or pull a git repository from URL to DIRECTORY.
-If `WITH-MAGIT' is true and `magit' is installed, use that
-instead of shelling out to git."
+(defun lazygit-message-sentinel-output (process msg)
+  "Write output of PROCESS with MSG."
+  (when (memq (process-status process) '(exit signal))
+    (message (string-trim (concat (process-name process) " " msg)))
+    (when (get-buffer "*lazygit*")
+      (when (> (buffer-size (get-buffer "*lazygit*")) 0)
+        (display-buffer (get-buffer "*lazygit*"))))))
+
+;;;###autoload
+(defun lazygit-message-async-shell-command (command)
+  "Run COMMAND asynchronously and output results to `minibuffer'."
+  (set-process-sentinel (start-process-shell-command command "*lazygit*" command)
+                        'lazygit-message-sentinel-output))
+
+;;;###autoload
+(defun lazygit-command (directory command)
+  "Run a git COMMAND in DIRECTORY."
+  (lazygit-message-async-shell-command
+   (concat "git -C " directory " " command " --porcelain")))
+
+;;;###autoload
+(defun lazygit-clone-or-pull (directory url)
+  "Clone or pull a git repository from URL to DIRECTORY."
   (if (lazygit-repo-p directory)
-      (if (and with-magit (fboundp 'magit-status-setup-buffer))
-          (progn
-            (message
-             (concat directory ": "
-                     (string-trim
-                      (shell-command-to-string
-                       (concat "git -C " directory " pull")))))
-            (magit-status-setup-buffer directory))
-        (lazygit-message-async-shell-command
-         (concat "git -C " directory " pull")))
-    (progn
-      (if (and with-magit (fboundp 'magit-clone-regular))
-          (magit-clone-regular url directory nil)
-        (lazygit-message-async-shell-command
-         (concat "git clone " url " " directory))))))
+      (lazygit-command directory "pull")
+    (lazygit-message-async-shell-command (concat "git clone " url " " directory))))
 
 ;;;###autoload
 (defun lazygit-clone-or-pull-repo (repos path name url directory)
@@ -176,18 +158,24 @@ Using PATH, NAME & URL."
          (cloneurl (cdr (assoc url repo)))
          (reponame (cdr (assoc name repo)))
          (dest (concat directory "/" reponame)))
-    (lazygit-clone-or-pull dest cloneurl t)))
+    (lazygit-clone-or-pull dest cloneurl)))
 
 ;;;###autoload
 (defun lazygit-clone-or-pull-batch (repos directory pathkey urlkey)
   "Batch pull or clone REPOS to DIRECTORY using PATHKEY and URLKEY."
   (mapc (lambda (r)
-          (make-directory (concat directory "/"
-                                  (cdr (assoc pathkey r)))
-                          t)
+          (make-directory (concat directory "/" (cdr (assoc pathkey r))) t)
           (lazygit-clone-or-pull
            (concat directory "/" (cdr (assoc pathkey r)))
            (cdr (assoc urlkey r))))
+        repos))
+
+;;;###autoload
+(defun lazygit-command-batch (repos directory pathkey command)
+  "Run COMMAND pointing at DIRECTORY/PATHKEY."
+  (mapc (lambda (r)
+          (lazygit-command
+           (concat directory "/" (cdr (assoc pathkey r))) command))
         repos))
 
 (provide 'lazygit)
