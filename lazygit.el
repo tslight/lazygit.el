@@ -145,15 +145,15 @@ Results will be pretty printed in a buffer."
              (buffer-live-p (process-buffer proc)))
     (display-buffer (process-buffer proc))
     (with-current-buffer (process-buffer proc)
+      (face-remap-add-relative 'button :background "black" :foreground "yellow" :underline t)
       (vc-compilation-mode 'git) (read-only-mode -1) (button-mode)
       (let ((moving (= (point) (process-mark proc)))
             (header (concat ":: " (process-name proc) " ::\n")))
         (save-excursion
           (unless (string-match-p header (buffer-substring-no-properties (point-min) (point-max)))
-            (face-remap-add-relative 'button :background "black" :foreground "yellow" :underline t)
             (goto-char (process-mark proc))
             (insert (propertize ":: " 'font-lock-face '(:foreground "cyan")))
-            (insert-text-button (process-name proc) :type 'find-file-button :face 'error)
+            (insert-text-button (process-name proc) :type 'find-file-button)
             (insert (propertize " ::\n" 'font-lock-face '(:foreground "cyan")))
             (set-marker (process-mark proc) (point)))
           ;; Insert the text, advancing the process marker.
