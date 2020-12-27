@@ -146,7 +146,11 @@ Results will be pretty printed in a buffer."
     (display-buffer (process-buffer proc))
     (with-current-buffer (process-buffer proc)
       (vc-compilation-mode 'git) (read-only-mode -1) (button-mode)
-      (face-remap-add-relative 'button :background "black" :foreground "yellow" :underline t)
+      (face-remap-add-relative 'button
+                               :weight 'semibold
+                               :background "black"
+                               :foreground "yellow"
+                               :underline t)
       (let* ((moving (= (point) (process-mark proc)))
              (timestamp (format-time-string "%T "))
              (directory (concat (process-name proc) "\n"))
@@ -155,7 +159,8 @@ Results will be pretty printed in a buffer."
         (save-excursion
           (unless (string-match-p header buffer-contents)
             (goto-char (process-mark proc))
-            (insert (propertize timestamp 'font-lock-face '(:foreground "cyan")))
+            (insert (propertize timestamp
+                                'font-lock-face '(:foreground "cyan" :weight semibold)))
             (insert-text-button directory :type 'find-file-button)
             (set-marker (process-mark proc) (point)))
           ;; Insert the text, advancing the process marker.
