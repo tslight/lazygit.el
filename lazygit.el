@@ -131,6 +131,8 @@ Results will be pretty printed in a buffer."
 (defun lazygit-process-filter (process output)
   (when (and output
              (not (string-match ".*already up to date.*" (downcase output)))
+             (not (string-match ".*receiving objects.*" (downcase output)))
+             (not (string-match ".*counting objects.*" (downcase output)))
              (buffer-live-p (process-buffer process)))
     (display-buffer (process-buffer process))
     (with-current-buffer (process-buffer process)
