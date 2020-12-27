@@ -121,31 +121,42 @@ Results will be pretty printed in a buffer."
        (file-regular-p (concat directory "/.git/HEAD"))))
 
 ;;;###autoload
-(defun lazygit-message-sentinel-output (process msg)
-  "Write output of PROCESS with MSG."
-  (when (memq (process-status process) '(exit signal))
-    (message (string-trim (concat (process-name process) " " msg)))
-    (when (get-buffer "*lazygit*")
-      (when (> (buffer-size (get-buffer "*lazygit*")) 0)
-        (display-buffer (get-buffer "*lazygit*"))))))
+(defun lazygit-process-sentinel (process event)
+  "Write output of PROCESS with EVENT."
+  (when (and (memq (process-status process) '(exit signal))
+             (not (equal event "finished\n")))
+    (message (string-trim (concat (process-name process) " " event)))))
 
 ;;;###autoload
-(defun lazygit-message-async-shell-command (command)
+(defun lazygit-process-filter (process output)
+  (when (and output
+             (not (string-match ".*already up to date.*" (downcase output)))
+             (buffer-live-p (process-buffer process)))
+    (display-buffer (process-buffer process))
+    (with-current-buffer (process-buffer process)
+      (insert (process-name process) ":\n" output))))
+
+;;;###autoload
+(defun lazygit-async-shell-command (command directory)
   "Run COMMAND asynchronously and output results to `minibuffer'."
-  (set-process-sentinel (start-process-shell-command command "*lazygit*" command)
-                        'lazygit-message-sentinel-output))
+  (let ((process (start-process-shell-command
+                  (abbreviate-file-name directory)
+                  "*lazygit*"
+                  command)))
+    (set-process-filter process 'lazygit-process-filter)
+    (set-process-sentinel process 'lazygit-process-sentinel)))
 
 ;;;###autoload
 (defun lazygit-command (directory command)
   "Run a git COMMAND in DIRECTORY."
-  (lazygit-message-async-shell-command (concat "git -C " directory " " command)))
+  (lazygit-async-shell-command (concat "git -C " directory " " command) directory))
 
 ;;;###autoload
 (defun lazygit-clone-or-pull (directory url)
   "Clone or pull a git repository from URL to DIRECTORY."
   (if (lazygit-repo-p directory)
-      (lazygit-command directory "pull --stat --quiet")
-    (lazygit-message-async-shell-command (concat "git clone " url " " directory))))
+      (lazygit-command directory "pull --stat")
+    (lazygit-async-shell-command (concat "git clone " url " " directory) directory)))
 
 ;;;###autoload
 (defun lazygit-clone-or-pull-repo (repos path name url directory)
@@ -211,8 +222,9 @@ Using PATH, NAME & URL."
   (interactive)
   (lazygit-delete-buffer)
   (mapc (lambda (directory)
-          (lazygit-command directory "pull --stat --quiet"))
-        (lazygit-repos-recursive "~" 12)))
+          (lazygit-command directory "pull --stat"))
+        (lazygit-repos-recursive "~" 12))
+  (message "Running git pull asynchronously on all repos..."))
 
 ;;;###autoload
 (defun lazygit-status-all ()
@@ -220,7 +232,8 @@ Using PATH, NAME & URL."
   (lazygit-delete-buffer)
   (mapc (lambda (directory)
           (lazygit-command directory "status --porcelain"))
-        (lazygit-repos-recursive "~" 12)))
+        (lazygit-repos-recursive "~" 12))
+  (message "Running git status asynchronously on all repos..."))
 
 (provide 'lazygit)
 ;; Local Variables:
