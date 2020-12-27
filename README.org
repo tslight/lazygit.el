@@ -1,9 +1,5 @@
 * Emacs API Clients for GitHub & GitLab
 
-#+CAPTION: Results of CI workflow
-#+NAME: fig: ci-bad
-[[https://github.com/tslight/lazygit.el/workflows/CI/badge.svg]]
-
 ** Overview
 
 So far I have implemented functions to clone or pull repositories from a list
@@ -18,6 +14,11 @@ with ~lazygitlab-clone-or-pull-group~.
 
 ~lazygitlab-retriever~ and ~lazygithub-retriever~ allow arbitrary querying of
 endpoints. You can view the JSON results pretty printed in a dedicated buffer.
+
+~lazygit-pull-all~ will search for all the git repos under ~$HOME~ on your
+system and run ~git pull~ on them. ~lazygit-status-all~ will do the same but
+running ~git status~. The results will appear in a new buffer with links to the
+repos that have been updated or have uncommitted changes.
 
 *N.B.* /I have only tested this on Emacs 27 & 28... Feedback running on other
 versions greatly appreciated/
@@ -92,19 +93,3 @@ If you want GitLab access:
                (defalias 'gh/all 'lazygithub-clone-or-pull-all)
                (defalias 'gh/repo 'lazygithub-clone-or-pull-repo))
 #+end_src
-
-** Screenshots
-
-Results of running ~(lazygithub-retriever "user/torvalds")~ when [[https://github.com/DamienCassou/json-navigator][json-navigator]] is
-installed:
-
-#+CAPTION: Results of lazygithub-retriever user
-#+NAME:fig:lazygithub-retriever
-[[./img/nav.png]]
-
-Results of running ~(lazygithub-retriever "user/torvalds")~ when [[https://github.com/DamienCassou/json-navigator][json-navigator]] is not
-installed:
-
-#+CAPTION: Results of lazygithub-retriever user
-#+NAME:fig:lazygithub-retriever
-[[./img/json.png]]
