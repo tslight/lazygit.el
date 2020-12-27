@@ -10,23 +10,16 @@ So far I have implemented functions to clone or pull repositories from a list
 of repositories available to the authenticated user, with
 ~lazygitlab-clone-or-pull-repo~ or ~lazygithub-clone-or-pull-repo~.
 
-If [[https://magit.vc/][Magit]] is installed, this will be used, otherwise we shell out to ~git~, so
-obviously, that needs to be installed on your system.
-
 You can clone or pull all repositories in one fail swoop with
-~lazygithub-clone-or-pull-all~ or ~lazygitlab-clone-or-pull-all~. This will not use
-[[https://magit.vc/][Magit]], unless called with prefix argument.
+~lazygithub-clone-or-pull-all~ or ~lazygitlab-clone-or-pull-all~.
 
 For GitLab you can also clone or pull all the repositories under a given group
-with ~lazygitlab-clone-or-pull-group~. This will not use [[https://magit.vc/][Magit]], unless called with
-prefix argument.
+with ~lazygitlab-clone-or-pull-group~.
 
 ~lazygitlab-retriever~ and ~lazygithub-retriever~ allow arbitrary querying of
-endpoints. If [[https://github.com/DamienCassou/json-navigator][json-navigator]] is installed, the JSON results will be opened in a
-fancy tree hiearchy browser. If not you can view the JSON results pretty
-printed in a dedicated buffer.
+endpoints. You can view the JSON results pretty printed in a dedicated buffer.
 
-*N.B.* /I have only tested this on Emacs 27... Feedback running on other
+*N.B.* /I have only tested this on Emacs 27 & 28... Feedback running on other
 versions greatly appreciated/
 
 ** Authentication
