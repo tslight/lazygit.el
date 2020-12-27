@@ -128,6 +128,14 @@ Results will be pretty printed in a buffer."
     (message (string-trim (concat (process-name process) " " event)))))
 
 ;;;###autoload
+(defun find-file-button (button)
+  (find-file (buffer-substring (button-start button) (button-end button))))
+;; https://superuser.com/a/331896
+(define-button-type 'find-file-button
+  'follow-link t
+  'action #'find-file-button)
+
+;;;###autoload
 (defun lazygit-process-filter (proc string)
   (when (and string
              (not (string-match-p ".*already up to date.*" (downcase string)))
@@ -137,15 +145,15 @@ Results will be pretty printed in a buffer."
              (buffer-live-p (process-buffer proc)))
     (display-buffer (process-buffer proc))
     (with-current-buffer (process-buffer proc)
-      (fundamental-mode) (read-only-mode -1)
+      (vc-compilation-mode 'git) (read-only-mode -1) (button-mode)
       (let ((moving (= (point) (process-mark proc)))
             (header (concat ":: " (process-name proc) " ::\n")))
         (save-excursion
           (unless (string-match-p header (buffer-substring-no-properties (point-min) (point-max)))
-            (face-remap-add-relative 'button :foreground "yellow" :underline t)
+            (face-remap-add-relative 'button :background "black" :foreground "yellow" :underline t)
             (goto-char (process-mark proc))
             (insert (propertize ":: " 'font-lock-face '(:foreground "cyan")))
-            (insert-text-button (process-name proc) :type 'find-file-button)
+            (insert-text-button (process-name proc) :type 'find-file-button :face 'error)
             (insert (propertize " ::\n" 'font-lock-face '(:foreground "cyan")))
             (set-marker (process-mark proc) (point)))
           ;; Insert the text, advancing the process marker.
@@ -153,7 +161,7 @@ Results will be pretty printed in a buffer."
           (insert (replace-regexp-in-string (string 13) "\n" string))
           (set-marker (process-mark proc) (point)))
         (if moving (goto-char (process-mark proc))))
-      (messages-buffer-mode)(button-mode))))
+      (read-only-mode 1))))
 
 ;;;###autoload
 (defun lazygit-async-shell-command (command directory)
