@@ -127,71 +127,33 @@ Results will be pretty printed in a buffer."
              (not (equal event "finished\n")))
     (message (string-trim (concat (process-name process) " " event)))))
 
-;; https://superuser.com/a/331898
-;;;###autoload
-(defun lazygit-buttonize-buffer ()
-  "Turn all file paths and URLs into buttons.
-
-https://superuser.com/a/331898"
-  (interactive)
-  (require 'ffap)
-  (deactivate-mark)
-  (let (token guess beg end reached len)
-    (save-excursion
-      (setq reached (point-min))
-      (goto-char (point-min))
-      (while (re-search-forward ffap-next-regexp nil t)
-        ;; `ffap-next-regexp' only finds some "indicator string" for a
-        ;; file or URL. `ffap-string-at-point' blows this up into a token.
-        (setq token (ffap-string-at-point))
-        (save-excursion
-          (beginning-of-line)
-          (when (search-forward token (point-at-eol) t)
-            (setq beg (match-beginning 0)
-                  end (match-end 0)
-                  reached end)))
-        ;; (message "Found token %s at (%d-%d)" token beg (- end 1))
-        (when (setq guess (ffap-guesser))
-          ;; (message "  Guessing %s" guess)
-          (save-excursion
-            (beginning-of-line)
-            (when (search-forward guess (point-at-eol) t)
-              (setq len (length guess) end (point) beg (- end len))
-              ;; (message "    Matched at (%d-%d]" beg (- end 1))
-              (unless (or (< (length guess) 2))
-                ;; (message "      Buttonize!")
-                (make-button beg end :type 'find-file-button)))))
-        ;; Continue one character after the guess, or the original token.
-        (goto-char (max reached end))))))
-
 ;;;###autoload
 (defun lazygit-process-filter (proc string)
   (when (and string
              (not (string-match-p ".*already up to date.*" (downcase string)))
              (not (string-match-p "^remote: enumerating objects" (downcase string)))
-             (not (string-match-p "^warning.*permanently added.*the list of known hosts"
-                                  (downcase string)))
+             (not (string-match-p "^warning.*permanently added.*known hosts" (downcase string)))
              (not (string-match-p ".*[0-9]+%.*" (downcase string)))
              (buffer-live-p (process-buffer proc)))
     (display-buffer (process-buffer proc))
     (with-current-buffer (process-buffer proc)
       (fundamental-mode) (read-only-mode -1)
       (let ((moving (= (point) (process-mark proc)))
-            (header (concat "Running in " (process-name proc) ":\n")))
+            (header (concat ":: " (process-name proc) " ::\n")))
         (save-excursion
-          (unless (string-match-p header
-                                  (buffer-substring-no-properties (point-min) (point-max)))
+          (unless (string-match-p header (buffer-substring-no-properties (point-min) (point-max)))
+            (face-remap-add-relative 'button :foreground "yellow" :underline t)
             (goto-char (process-mark proc))
-            (insert header)
+            (insert (propertize ":: " 'font-lock-face '(:foreground "cyan")))
+            (insert-text-button (process-name proc) :type 'find-file-button)
+            (insert (propertize " ::\n" 'font-lock-face '(:foreground "cyan")))
             (set-marker (process-mark proc) (point)))
           ;; Insert the text, advancing the process marker.
           (goto-char (process-mark proc))
           (insert (replace-regexp-in-string (string 13) "\n" string))
           (set-marker (process-mark proc) (point)))
         (if moving (goto-char (process-mark proc))))
-      (messages-buffer-mode)
-      (lazygit-buttonize-buffer)
-      (button-mode))))
+      (messages-buffer-mode)(button-mode))))
 
 ;;;###autoload
 (defun lazygit-async-shell-command (command directory)
