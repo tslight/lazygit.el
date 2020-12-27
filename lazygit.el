@@ -128,14 +128,21 @@ Results will be pretty printed in a buffer."
     (message (string-trim (concat (process-name process) " " event)))))
 
 ;;;###autoload
-(defun lazygit-process-filter (process output)
-  (when (and output
-             (not (string-match ".*already up to date.*" (downcase output)))
-             (not (string-match ".*[0-9]+%.*" (downcase output)))
-             (buffer-live-p (process-buffer process)))
-    (display-buffer (process-buffer process))
-    (with-current-buffer (process-buffer process)
-      (insert (process-name process) ":\n" (replace-regexp-in-string (string 13) "\n" output)))))
+(defun lazygit-process-filter (proc string)
+  (when (and string
+             (not (string-match ".*already up to date.*" (downcase string)))
+             (not (string-match ".*[0-9]+%.*" (downcase string)))
+             (buffer-live-p (process-buffer proc)))
+    (display-buffer (process-buffer proc))
+    (with-current-buffer (process-buffer proc)
+      (let ((moving (= (point) (process-mark proc))))
+        (save-excursion
+          ;; Insert the text, advancing the process marker.
+          (goto-char (process-mark proc))
+          (insert (process-name proc) ":\n"
+                  (replace-regexp-in-string (string 13) "\n" string))
+          (set-marker (process-mark proc) (point)))
+        (if moving (goto-char (process-mark proc)))))))
 
 ;;;###autoload
 (defun lazygit-async-shell-command (command directory)
