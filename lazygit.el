@@ -152,9 +152,9 @@ Results will be pretty printed in a buffer."
         (save-excursion
           (unless (string-match-p header (buffer-substring-no-properties (point-min) (point-max)))
             (goto-char (process-mark proc))
-            (insert (propertize ":: " 'font-lock-face '(:foreground "cyan")))
+            (insert (propertize ":: " 'font-lock-face '(:foreground "cyan" :weight bold)))
             (insert-text-button (process-name proc) :type 'find-file-button)
-            (insert (propertize " ::\n" 'font-lock-face '(:foreground "cyan")))
+            (insert (propertize " ::\n" 'font-lock-face '(:foreground "cyan" :weight bold)))
             (set-marker (process-mark proc) (point)))
           ;; Insert the text, advancing the process marker.
           (goto-char (process-mark proc))
