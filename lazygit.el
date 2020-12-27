@@ -134,7 +134,7 @@ Results will be pretty printed in a buffer."
              (buffer-live-p (process-buffer process)))
     (display-buffer (process-buffer process))
     (with-current-buffer (process-buffer process)
-      (insert (process-name process) ":\n" output))))
+      (insert (process-name process) ":\n" (replace-regexp-in-string (string 13) "\n" output)))))
 
 ;;;###autoload
 (defun lazygit-async-shell-command (command directory)
