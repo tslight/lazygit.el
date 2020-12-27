@@ -243,7 +243,7 @@ Using PATH, NAME & URL."
   (mapc (lambda (directory)
           (lazygit-command directory "pull --stat"))
         (lazygit-repos-recursive "~" 12))
-  (message "Running git pull asynchronously on all repos..."))
+  (message "Ran git pull asynchronously on all repos."))
 
 ;;;###autoload
 (defun lazygit-status-all ()
@@ -252,7 +252,7 @@ Using PATH, NAME & URL."
   (mapc (lambda (directory)
           (lazygit-command directory "status --porcelain"))
         (lazygit-repos-recursive "~" 12))
-  (message "Running git status asynchronously on all repos..."))
+  (message "Ran git status asynchronously on all repos."))
 
 (provide 'lazygit)
 ;; Local Variables:
