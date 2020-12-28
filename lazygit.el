@@ -154,7 +154,7 @@ Results will be pretty printed in a buffer."
                                :underline t)
       (let* ((moving (= (point) (process-mark proc)))
              (timestamp (format-time-string "%T "))
-             (directory (concat (process-name proc) "\n"))
+             (directory (concat (process-name proc)))
              (header (concat timestamp directory))
              (buffer-contents (buffer-substring-no-properties (point-min) (point-max))))
         (save-excursion
@@ -163,6 +163,7 @@ Results will be pretty printed in a buffer."
             (insert (propertize timestamp
                                 'font-lock-face '(:foreground "cyan" :weight semibold)))
             (insert-text-button directory :type 'find-file-button)
+            (insert "\n")
             (set-marker (process-mark proc) (point)))
           ;; Insert the text, advancing the process marker.
           (goto-char (process-mark proc))
