@@ -13,6 +13,7 @@
 (require 'auth-source)
 (require 'json)
 (require 'url)
+(require 'vc)
 
 (defgroup lazygit nil "LazyGit configuration." :group 'convenience)
 
