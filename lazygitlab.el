@@ -34,12 +34,15 @@
 ;;; Code:
 (require 'lazygit)
 
+;;;###autoload
 (defcustom lazygitlab-directory (expand-file-name "~/src/gitlab")
   "Directory to clone projects to."
   :group 'lazygit
   :type 'directory)
 
+;;;###autoload
 (defvar lazygitlab-baseurl "https://gitlab.com/api/v4/")
+;;;###autoload
 (defvar lazygitlab-attr "?pagination=keyset&per_page=100&order_by=id&sort=asc&membership=true")
 
 ;;;###autoload
@@ -132,12 +135,14 @@ If `prefix' only look for git repos ARG deep.  Defaults to `lazygit-maxdepth'."
   (interactive "p")
   (lazygit-pull-all arg lazygitlab-directory))
 
+;;;###autoload
 (defun lazygitlab-status-all (arg)
   "View status of all projects in `lazygitlab-directory'.
 If `prefix' only look for git repos ARG deep.  Defaults to `lazygit-maxdepth'."
   (interactive "p")
   (lazygit-status-all arg lazygitlab-directory))
 
+;;;###autoload
 (defvar lazygitlab-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "ca") 'lazygitlab-clone-or-pull-all)

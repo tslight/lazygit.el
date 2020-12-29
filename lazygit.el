@@ -16,18 +16,22 @@
 (require 'url)
 (require 'vc)
 
+;;;###autoload
 (defgroup lazygit nil "LazyGit configuration." :group 'convenience)
 
+;;;###autoload
 (defcustom lazygit-directory (expand-file-name "~")
   "Path to start looking for git repositories recursively under."
   :group 'lazygit
   :type 'directory)
 
+;;;###autoload
 (defcustom lazygit-maxdepth 12
   "Maximum depth to descent when searching for git repositories."
   :group 'lazygit
   :type 'integer)
 
+;;;###autoload
 (defun lazygit-secret-from-authinfo (host)
   "Retrieve API token for HOST from `authinfo' file.
 If there is nothing found for HOST prompt the user to enter one."
@@ -291,6 +295,7 @@ Defaults to `lazygit-maxdepth'."
                          "status --porcelain"
                          (if (> arg 1) arg lazygit-maxdepth)))
 
+;;;###autoload
 (defvar lazygit-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "s") 'lazygit-status-all)

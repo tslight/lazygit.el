@@ -31,12 +31,15 @@
 ;;; Code:
 (require 'lazygit)
 
+;;;###autoload
 (defcustom lazygithub-directory (expand-file-name "~/src/github")
   "File to store API Personal Access Tokens in."
   :group 'lazygit
   :type 'directory)
 
+;;;###autoload
 (defvar lazygithub-baseurl "https://api.github.com/")
+;;;###autoload
 (defvar lazygithub-attr "?per_page=100&page=1")
 
 ;;;###autoload
@@ -80,12 +83,14 @@ If `prefix' only look for git repos ARG deep.  Defaults to `lazygit-maxdepth'."
   (interactive "p")
   (lazygit-pull-all arg lazygithub-directory))
 
+;;;###autoload
 (defun lazygithub-status-all (arg)
   "View status of all projects in `lazygithub-directory'.
 If `prefix' only look for git repos ARG deep.  Defaults to `lazygit-maxdepth'."
   (interactive "p")
   (lazygit-status-all arg lazygithub-directory))
 
+;;;###autoload
 (defvar lazygithub-map
   (let ((map (make-sparse-keymap)))
     (define-key map (kbd "ca") 'lazygithub-clone-or-pull-all)
