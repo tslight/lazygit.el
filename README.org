@@ -1,39 +1,29 @@
 #+TITLE: Emacs GitHub & GitLab API Clients
 #+AUTHOR: Toby Slight
 
-Ever setup up a new machine and just wanted to clone all of your GitHub repos
-or GitLab projects (or groups) quickly and easily from the comfort of Emacs?
-
-/Lazygit to the rescue.../
+Ever wanted to clone *ALL* of your GitHub repos or GitLab projects (or groups)
+quickly and easily from the comfort of Emacs?
 
 [[./img/clone.png]]
 
 Ever been multi-tasking like a mofo, in lots of different projects, and
 wondered how much work you hadn't committed to git yet?
 
-/Lazygit to the rescue.../
-
 [[./img/status.png]]
 
-Ever started the day and wished you could just quickly update all the Git
-repos on your machine in one fail swoop with an Emacs command?
-
-/Lazygit to the rescue.../
+Ever wished you could just quickly update *ALL* the Git repos on your machine in
+one fail swoop with an Emacs command?
 
 [[./img/pull.png]]
 
-Lazygit provides commands to batch run Git operations on all local or just
+~lazygit~ provides commands to batch run Git operations on all local or
 specific forge repositories.
 
-Clone or pull all repositories from GitHub or GitLab:
+Clone or pull all repositories from GitHub or GitLab with
+~lazygithub-clone-or-pull-all~ or ~lazygitlab-clone-or-pull-all~
 
-~lazygithub-clone-or-pull-all~
-~lazygitlab-clone-or-pull-all~
-
-Choose a single repository from any available to you on a forge:
-
-~lazygitlab-clone-or-pull-project~
-~lazygithub-clone-or-pull-repo~
+Choose a single repository from any available to you on a forge with
+~lazygitlab-clone-or-pull-project~ or ~lazygithub-clone-or-pull-repo~
 
 For GitLab you can also clone or pull all the repositories under a given
 group with ~lazygitlab-clone-or-pull-group~.
