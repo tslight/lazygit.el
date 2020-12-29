@@ -1,16 +1,32 @@
 #+TITLE: Emacs API Clients for GitHub & GitLab
 #+AUTHOR: Toby Slight
-#+STARTUP: showall
-
+#+STARTUP: overview
+(setq lazygitlab-directory "~/src")
 * Overview
 
-  Every setup up a new machine and just wanted to clone all your GitHub repos
-  quickly and easily from the comfort of Emacs? Lazygit to the rescue!
+  Ever setup up a new machine and just wanted to clone all your GitHub repos or
+  GitLab projects (or groups) quickly and easily from the comfort of Emacs?
+
+  Lazygit to the rescue...
 
   [[./img/clone.png]]
 
-  A way to batch run Git operations on all local or just specific forge
-  repositories.
+  Ever been multi-tasking like a mofo, and wondered how much work you hadn't
+  committed to git yet?
+
+  Lazygit to the rescue...
+
+  [[./img/status.png]]
+
+  Ever started the day and wished you could just quickly update all the Git
+  repos on your machine in one fail swoop with an Emacs command?
+
+  Lazygit to the rescue...
+
+  [[./img/pull.png]]
+
+  Lazygit provides commands to batch run Git operations on all local or just
+  specific forge repositories.
 
   You can clone or pull all repositories in one fail swoop with
   ~lazygithub-clone-or-pull-all~ or ~lazygitlab-clone-or-pull-all~.

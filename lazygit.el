@@ -50,6 +50,12 @@ If there is nothing found for HOST prompt the user to enter one."
         (funcall secret))))
 
 ;;;###autoload
+(defun lazygit-delete-buffer ()
+  "Delete *lazygit* buffer, if it exists."
+  (when (get-buffer "*lazygit*")
+    (kill-buffer "*lazygit*")))
+
+;;;###autoload
 (defun lazygit-filter-keys (list keys)
   "Filter a LIST of association lists by a list of KEYS."
   (mapcar (lambda (al) (mapcar (lambda (key) (assoc key al)) keys)) list))
@@ -222,19 +228,12 @@ Using PATH, NAME & URL."
 ;;;###autoload
 (defun lazygit-clone-or-pull-batch (repos directory pathkey urlkey)
   "Batch pull or clone REPOS to DIRECTORY using PATHKEY and URLKEY."
+  (lazygit-delete-buffer)
   (mapc (lambda (r)
           (make-directory (concat directory "/" (cdr (assoc pathkey r))) t)
           (lazygit-clone-or-pull
            (concat directory "/" (cdr (assoc pathkey r)))
            (cdr (assoc urlkey r))))
-        repos))
-
-;;;###autoload
-(defun lazygit-command-batch-remote (repos directory pathkey command)
-  "Run git COMMAND in DIRECTORY/PATHKEY for all REPOS."
-  (mapc (lambda (r)
-          (lazygit-command
-           (concat directory "/" (cdr (assoc pathkey r))) command))
         repos))
 
 ;;;###autoload
@@ -268,12 +267,6 @@ Using PATH, NAME & URL."
           (lazygit-command directory command))
         (lazygit-repos-recursive directory maxdepth))
   (message "Ran git %s on all repos %d deep under %s" command maxdepth directory))
-
-;;;###autoload
-(defun lazygit-delete-buffer ()
-  "Delete *lazygit* buffer, if it exists."
-  (when (get-buffer "*lazygit*")
-    (kill-buffer "*lazygit*")))
 
 ;;;###autoload
 (defun lazygit-pull-all (arg &optional directory)
