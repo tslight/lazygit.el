@@ -153,5 +153,6 @@ If `prefix' only look for git repos ARG deep.  Defaults to `lazygit-maxdepth'."
 (provide 'lazygitlab)
 ;; Local Variables:
 ;; indent-tabs-mode: nil
+;; byte-compile-warnings: (not free-vars noruntime)
 ;; End:
 ;;; lazygitlab.el ends here
