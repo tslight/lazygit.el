@@ -21,7 +21,7 @@
   :group 'lazygit
   :type 'directory)
 
-(defcustom lazygit-maxdepth 10
+(defcustom lazygit-maxdepth 12
   "Maximum depth to descent when searching for git repositories."
   :group 'lazygit
   :type 'integer)
