@@ -7,7 +7,6 @@
 ;; Copyright (C) 2020 Toby Slight
 ;; Author: Toby Slight tslight@pm.me
 ;; URL: https://github.com/tslight/lazygit.el
-;; Package-Requires: ((Emacs))
 
 ;;; Code:
 (require 'auth-source)
