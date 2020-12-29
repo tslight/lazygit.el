@@ -153,11 +153,11 @@ Results will be pretty printed in a buffer."
                                :underline t)
       (let* ((moving (= (point) (process-mark proc)))
              (timestamp (format-time-string "%T "))
-             (directory (concat (process-name proc)))
+             (directory (process-name proc))
              (header (concat timestamp directory))
              (buffer-contents (buffer-substring-no-properties (point-min) (point-max))))
         (save-excursion
-          (unless (string-match-p header buffer-contents)
+          (unless (string-match-p (concat "^" header "$") buffer-contents)
             (goto-char (process-mark proc))
             (insert (propertize timestamp
                                 'font-lock-face '(:foreground "cyan" :weight semibold)))
