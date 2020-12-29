@@ -1,6 +1,7 @@
 #+TITLE: Emacs API Clients for GitHub & GitLab
 #+AUTHOR: Toby Slight
 #+STARTUP: showall
+
 * Overview
 
   A way to batch run Git operations on all local or just specific forge
@@ -41,59 +42,23 @@
 
 * Configuration
 
-  To batch pull and view status locally
-
   #+begin_src emacs-lisp
-    (require 'lazygit)
-    (global-set-key (kbd "C-c g h r") 'lazygit-status-all)
-    (global-set-key (kbd "C-c g h a") 'lazygit-pull-all)
+    (use-package lazygit :ensure nil
+      :load-path "~/src/gitlab/tspub/lisp/lazygit"
+      :bind-keymap
+      ("C-c g" . lazygit-map)
+      :config
+      (setq lazygit-directory "~/src"))
+
+    (use-package lazygitlab :ensure nil
+      :requires lazygit
+      :bind-keymap
+      ("C-c l" . lazygitlab-map)
+      (setq lazygitlab-directory "~/src/gitlab"))
+
+    (use-package lazygithub :ensure nil
+      :requires lazygit
+      :bind-keymap
+      ("C-c h" . lazygithub-map)
+      (setq lazygitlab-directory "~/src/github"))
   #+end_src
-
-  If you want GitHub access:
-
-  #+begin_src emacs-lisp
-    (require 'lazygithub)
-    (setq lazygithub-directory (expand-file-name "~/github"))
-    (global-set-key (kbd "C-c g h r") 'lazygithub-clone-or-pull-repo)
-    (global-set-key (kbd "C-c g h a") 'lazygithub-clone-or-pull-all)
-  #+end_src
-
-  If you want GitLab access:
-
-  #+begin_src emacs-lisp
-    (require 'lazygitlab)
-    (setq lazygithub-directory (expand-file-name "~/gitlab"))
-    (global-set-key (kbd "C-c g l p") 'lazygitlab-clone-or-pull-project)
-    (global-set-key (kbd "C-c g l g") 'lazygitlab-clone-or-pull-group)
-    (global-set-key (kbd "C-c g l a") 'lazygitlab-clone-or-pull-all)
-  #+end_src
-
-** Use Package
-
-   #+begin_src emacs-lisp
-     (use-package lazygit :load-path "/path/to/cloned/repo"
-       :bind
-       ("C-c g s" . lazygit-status-all)
-       ("C-c g p" . lazygit-pull-all))
-   #+end_src
-
-   #+begin_src emacs-lisp
-     (use-package lazygitlab
-       :after lazygit
-       :bind
-       ("C-c g l a" . lazygitlab-clone-or-pull-all)
-       ("C-c g l p" . lazygitlab-clone-or-pull-project)
-       ("C-c g l g" . lazygitlab-clone-or-pull-group)
-       :config
-       (setq lazygitlab-directory (expand-file-name "/gitlab/projects/destination"))
-   #+end_src
-
-   #+begin_src emacs-lisp
-     (use-package lazygithub
-       :after lazygit
-       :bind
-       ("C-c g h a" . lazygithub-clone-or-pull-all)
-       ("C-c g h r" . lazygithub-clone-or-pull-repo)
-       :config
-       (setq lazygithub-directory (expand-file-name "/github/projects/destination"))
-   #+end_src

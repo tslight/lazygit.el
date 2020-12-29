@@ -56,7 +56,7 @@
 
 ;;;###autoload
 (defun lazygithub-clone-or-pull-repo ()
-  "Clone or pull repository to `lazygitlab-directory'."
+  "Clone or pull repository to `lazygithub-directory'."
   (interactive)
   (lazygit-clone-or-pull-repo (lazygithub-get-values "user/repos" (list 'full_name
                                                                         'name
@@ -64,11 +64,28 @@
                               'full_name 'name 'ssh_url lazygithub-directory))
 
 ;;;###autoload
-(defun lazygithub-clone-or-pull-all ()
-  "Clone or pull ALL GitHub repositories to `lazygitlab-directory'."
-  (interactive)
-  (let ((repos (lazygithub-get-values "user/repos" (list 'full_name 'ssh_url))))
-    (lazygit-clone-or-pull-batch repos lazygithub-directory 'full_name 'ssh_url)))
+(defun lazygithub-pull-all (arg)
+  "Git pull all projects in `lazygithub-directory'.
+If `prefix' only look for git repos ARG deep.  Defaults to `lazygit-maxdepth'."
+  (interactive "p")
+  (lazygit-pull-all arg lazygithub-directory))
+
+(defun lazygithub-status-all (arg)
+  "View status of all projects in `lazygithub-directory'.
+If `prefix' only look for git repos ARG deep.  Defaults to `lazygit-maxdepth'."
+  (interactive "p")
+  (lazygit-status-all arg lazygithub-directory))
+
+(defvar lazygithub-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "ca") 'lazygithub-clone-or-pull-all)
+    (define-key map (kbd "cr") 'lazygithub-clone-or-pull-repo)
+    (define-key map (kbd "p") 'lazygithub-pull-all)
+    (define-key map (kbd "r") 'lazygithub-retriever)
+    (define-key map (kbd "s") 'lazygithub-status-all)
+    map)
+  "Keymap for lazygithub commands.")
+(fset 'lazygithub-map lazygithub-map)
 
 (provide 'lazygithub)
 ;; Local Variables:

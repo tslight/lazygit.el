@@ -122,15 +122,29 @@
                                  'ssh_url_to_repo)))
 
 ;;;###autoload
-(defun lazygitlab-status-all ()
-  "View status of all projects in `lazygitlab-directory'."
-  (interactive)
-  (let ((projects (lazygitlab-get-values
-                   "projects"
-                   (list 'path_with_namespace 'ssh_url_to_repo))))
-    (lazygit-command-batch projects
-                           lazygitlab-directory
-                           'path_with_namespace "status --porcelain")))
+(defun lazygitlab-pull-all (arg)
+  "Git pull all projects in `lazygitlab-directory'.
+If `prefix' only look for git repos ARG deep.  Defaults to `lazygit-maxdepth'."
+  (interactive "p")
+  (lazygit-pull-all arg lazygitlab-directory))
+
+(defun lazygitlab-status-all (arg)
+  "View status of all projects in `lazygitlab-directory'.
+If `prefix' only look for git repos ARG deep.  Defaults to `lazygit-maxdepth'."
+  (interactive "p")
+  (lazygit-status-all arg lazygitlab-directory))
+
+(defvar lazygitlab-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "ca") 'lazygitlab-clone-or-pull-all)
+    (define-key map (kbd "cg") 'lazygitlab-clone-or-pull-group)
+    (define-key map (kbd "cp") 'lazygitlab-clone-or-pull-project)
+    (define-key map (kbd "p") 'lazygitlab-pull-all)
+    (define-key map (kbd "r") 'lazygitlab-retriever)
+    (define-key map (kbd "s") 'lazygitlab-status-all)
+    map)
+  "Keymap for lazygitlab commands.")
+(fset 'lazygitlab-map lazygitlab-map)
 
 (provide 'lazygitlab)
 ;; Local Variables:

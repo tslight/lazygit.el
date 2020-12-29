@@ -16,6 +16,16 @@
 
 (defgroup lazygit nil "LazyGit configuration." :group 'convenience)
 
+(defcustom lazygit-directory (expand-file-name "~")
+  "Path to start looking for git repositories recursively under."
+  :group 'lazygit
+  :type 'directory)
+
+(defcustom lazygit-maxdepth 10
+  "Maximum depth to descent when searching for git repositories."
+  :group 'lazygit
+  :type 'integer)
+
 (defun lazygit-secret-from-authinfo (host)
   "Retrieve API token for HOST from `authinfo' file.
 If there is nothing found for HOST prompt the user to enter one."
@@ -220,7 +230,7 @@ Using PATH, NAME & URL."
         repos))
 
 ;;;###autoload
-(defun lazygit-command-batch (repos directory pathkey command)
+(defun lazygit-command-batch-remote (repos directory pathkey command)
   "Run git COMMAND in DIRECTORY/PATHKEY for all REPOS."
   (mapc (lambda (r)
           (lazygit-command
@@ -251,6 +261,14 @@ Using PATH, NAME & URL."
         (setq current-directory-list (cdr current-directory-list))))
     (delete-dups git-repos)))
 
+(defun lazygit-command-batch (directory command maxdepth)
+  "Run git COMMAND in all sub-directories (to MAXDEPTH) of DIRECTORY."
+  (lazygit-delete-buffer)
+  (mapc (lambda (directory)
+          (lazygit-command directory command))
+        (lazygit-repos-recursive directory maxdepth))
+  (message "Ran git %s on all repos %d deep under %s" command maxdepth directory))
+
 ;;;###autoload
 (defun lazygit-delete-buffer ()
   "Delete *lazygit* buffer, if it exists."
@@ -258,27 +276,34 @@ Using PATH, NAME & URL."
     (kill-buffer "*lazygit*")))
 
 ;;;###autoload
-(defun lazygit-pull-all ()
-  "Run git pull on all repos in user-home-directory.
-Output results to *lazygit* buffer."
+(defun lazygit-pull-all (arg &optional directory)
+  "Git pull on all projects in DIRECTORY.
+If `prefix' only look for git repos ARG deep.
+Defaults to `lazygit-maxdepth'."
   (interactive)
-  (lazygit-delete-buffer)
-  (mapc (lambda (directory)
-          (lazygit-command directory "pull --stat"))
-        (lazygit-repos-recursive "~" 12))
-  (message "Ran git pull asynchronously on all repos."))
+  (lazygit-command-batch (if directory directory lazygit-directory)
+                         "pull --stat"
+                         (if (> arg 1) arg lazygit-maxdepth)))
 
 ;;;###autoload
-(defun lazygit-status-all ()
-  "Run git status on all repos in user-home-directory.
-Output results to *lazygit* buffer."
-  (interactive)
-  (lazygit-delete-buffer)
-  (mapc (lambda (directory)
-          (lazygit-command directory "status --porcelain"))
-        (lazygit-repos-recursive "~" 12))
-  (message "Ran git status asynchronously on all repos."))
+(defun lazygit-status-all (arg &optional directory)
+  "Git status on all projects in DIRECTORY.
+If `prefix' only look for git repos ARG deep.
+Defaults to `lazygit-maxdepth'."
+  (interactive "p")
+  (lazygit-command-batch (if directory directory lazygit-directory)
+                         "status --porcelain"
+                         (if (> arg 1) arg lazygit-maxdepth)))
 
+(defvar lazygit-map
+  (let ((map (make-sparse-keymap)))
+    (define-key map (kbd "s") 'lazygit-status-all)
+    (define-key map (kbd "p") 'lazygit-pull-all)
+    map)
+  "Keymap for lazygit commands.")
+(fset 'lazygit-map lazygit-map)
+
+;;;###autoload
 (provide 'lazygit)
 ;; Local Variables:
 ;; byte-compile-warnings: (not free-vars noruntime)
