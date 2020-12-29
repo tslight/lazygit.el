@@ -280,7 +280,7 @@ Using PATH, NAME & URL."
   "Git pull on all projects in DIRECTORY.
 If `prefix' only look for git repos ARG deep.
 Defaults to `lazygit-maxdepth'."
-  (interactive)
+  (interactive "p")
   (lazygit-command-batch (if directory directory lazygit-directory)
                          "pull --stat"
                          (if (> arg 1) arg lazygit-maxdepth)))
