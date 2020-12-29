@@ -1,70 +1,65 @@
 #+TITLE: Emacs GitHub & GitLab API Clients
 #+AUTHOR: Toby Slight
-#+STARTUP: overview
-* Overview
 
-  Ever setup up a new machine and just wanted to clone all of your GitHub repos
-  or GitLab projects (or groups) quickly and easily from the comfort of Emacs?
+Ever setup up a new machine and just wanted to clone all of your GitHub repos
+or GitLab projects (or groups) quickly and easily from the comfort of Emacs?
 
-  /Lazygit to the rescue.../
+/Lazygit to the rescue.../
 
-  [[./img/clone.png]]
+[[./img/clone.png]]
 
-  Ever been multi-tasking like a mofo, in lots of different projects, and
-  wondered how much work you hadn't committed to git yet?
+Ever been multi-tasking like a mofo, in lots of different projects, and
+wondered how much work you hadn't committed to git yet?
 
-  /Lazygit to the rescue.../
+/Lazygit to the rescue.../
 
-  [[./img/status.png]]
+[[./img/status.png]]
 
-  Ever started the day and wished you could just quickly update all the Git
-  repos on your machine in one fail swoop with an Emacs command?
+Ever started the day and wished you could just quickly update all the Git
+repos on your machine in one fail swoop with an Emacs command?
 
-  /Lazygit to the rescue.../
+/Lazygit to the rescue.../
 
-  [[./img/pull.png]]
+[[./img/pull.png]]
 
-  Lazygit provides commands to batch run Git operations on all local or just
-  specific forge repositories.
+Lazygit provides commands to batch run Git operations on all local or just
+specific forge repositories.
 
-  Clone or pull all repositories from GitHub or GitLab:
+Clone or pull all repositories from GitHub or GitLab:
 
-  ~lazygithub-clone-or-pull-all~
-  ~lazygitlab-clone-or-pull-all~
+~lazygithub-clone-or-pull-all~
+~lazygitlab-clone-or-pull-all~
 
-  Choose a single repository from any available to you on a forge:
+Choose a single repository from any available to you on a forge:
 
-  ~lazygitlab-clone-or-pull-project~
-  ~lazygithub-clone-or-pull-repo~
+~lazygitlab-clone-or-pull-project~
+~lazygithub-clone-or-pull-repo~
 
-  For GitLab you can also clone or pull all the repositories under a given
-  group with ~lazygitlab-clone-or-pull-group~.
+For GitLab you can also clone or pull all the repositories under a given
+group with ~lazygitlab-clone-or-pull-group~.
 
-  ~lazygit-pull-all~ will search for all the git repos under
-  ~lazygit-directory~ (defaults to ~$HOME~) on your system and run ~git pull~
-  on them.
+~lazygit-pull-all~ will search for all the git repos under
+~lazygit-directory~ (defaults to ~$HOME~) on your system and run ~git pull~
+on them.
 
-  ~lazygit-status-all~ show you the ~git-status~ or all your local projects.
+~lazygit-status-all~ show you the ~git-status~ or all your local projects.
 
-  ~lazygitlab-status-all~ and ~lazygitlab-pull-all~ will do the same but just
-  for projects under ~lazygitab-directory~ and ~lazygithub-directory~
-  respectively.
+~lazygitlab-status-all~ and ~lazygitlab-pull-all~ will do the same but just
+for projects under ~lazygitab-directory~ and ~lazygithub-directory~
+respectively.
 
-  The directory variables can be changed via the customize interface or with
-  ~setq~.
+The directory variables can be changed via the customize interface or with
+~setq~.
 
-  The output of all operations will appear in a new buffer with button links to
-  the repos that have been updated or have uncommitted changes, so you can
-  quickly jump to the project directory.
+The output of all operations will appear in a new buffer with button links to
+the repos that have been updated or have uncommitted changes, so you can
+quickly jump to the project directory.
 
-** BONUS
+~lazygitlab-retriever~ and ~lazygithub-retriever~ allow arbitrary querying of
+endpoints. You can view the JSON results pretty printed in a dedicated buffer.
 
-  ~lazygitlab-retriever~ and ~lazygithub-retriever~ allow arbitrary querying of
-  endpoints. You can view the JSON results pretty printed in a dedicated
-  buffer.
-
-  This is pretty handy if you happen to be a frustrated DevOps/GitOps engineer
-  trying to write automation tools targetting GitHub or GitLab's APIs...
+This is pretty handy if you happen to be a frustrated DevOps/GitOps engineer
+trying to write automation tools targetting GitHub or GitLab's APIs...
 
 * Authentication
 
@@ -84,43 +79,52 @@
     (use-package lazygit :ensure nil
       :load-path "~/src/gitlab/tspub/lisp/lazygit"
       :bind-keymap
-      ("C-c g" . lazygit-map))
+      ("C-c g" . lazygit-map)
+      :config
+      (setq lazygit-directory (expand-file-name "~/src")))
   #+end_src
 
   #+begin_src emacs-lisp
     (use-package lazygitlab :ensure nil
       :load-path "~/src/gitlab/tspub/lisp/lazygit"
       :bind-keymap
-      ("C-c l" . lazygitlab-map))
+      ("C-c l" . lazygitlab-map)
+      :config
+      (setq lazygitlab-directory (expand-file-name "~/src/gitlab")))
   #+end_src
 
   #+begin_src emacs-lisp
     (use-package lazygithub :ensure nil
       :load-path "~/src/gitlab/tspub/lisp/lazygit"
       :bind-keymap
-      ("C-c h" . lazygithub-map))
+      ("C-c h" . lazygithub-map)
+      :config
+      (setq lazygithub-directory (expand-file-name "~/src/github")))
   #+end_src
 
 * Default Keybindings
 
+  You will need bind these maps for them to be available, as I have done in the
+  ~use-package~ declaration above.
+
   #+begin_src text
-    C-c g p         lazygit-pull-all
-    C-c g s         lazygit-status-all
+    <lazygit-map> g p lazygit-pull-all
+    <lazygit-map> g s lazygit-status-all
   #+end_src
 
   #+begin_src text
-    C-c l p         lazygitlab-pull-all
-    C-c l r         lazygitlab-retriever
-    C-c l s         lazygitlab-status-all
-    C-c l c a       lazygitlab-clone-or-pull-all
-    C-c l c g       lazygitlab-clone-or-pull-group
-    C-c l c p       lazygitlab-clone-or-pull-project
+    <lazygitlab-map> p   lazygitlab-pull-all
+    <lazygitlab-map> r   lazygitlab-retriever
+    <lazygitlab-map> s   lazygitlab-status-all
+    <lazygitlab-map> c a lazygitlab-clone-or-pull-all
+    <lazygitlab-map> c g lazygitlab-clone-or-pull-group
+    <lazygitlab-map> c p lazygitlab-clone-or-pull-project
   #+end_src
 
   #+begin_src text
-    C-c h p         lazygithub-pull-all
-    C-c h r         lazygithub-retriever
-    C-c h s         lazygithub-status-all
-    C-c h c a       lazygithub-clone-or-pull-all
-    C-c h c r       lazygithub-clone-or-pull-repo
+    <lazygithub-map> p   lazygithub-pull-all
+    <lazygithub-map> r   lazygithub-retriever
+    <lazygithub-map> s   lazygithub-status-all
+    <lazygithub-map> c a lazygithub-clone-or-pull-all
+    <lazygithub-map> c r lazygithub-clone-or-pull-repo
   #+end_src
