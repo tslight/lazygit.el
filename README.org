@@ -46,23 +46,17 @@
     (use-package lazygit :ensure nil
       :load-path "~/src/gitlab/tspub/lisp/lazygit"
       :bind-keymap
-      ("C-c g" . lazygit-map)
-      :config
-      (setq lazygit-directory "~/src"))
+      ("C-c g" . lazygit-map))
 
     (use-package lazygitlab :ensure nil
-      :requires lazygit
+      :load-path "~/src/gitlab/tspub/lisp/lazygit"
       :bind-keymap
-      ("C-c l" . lazygitlab-map)
-      :config
-      (setq lazygitlab-directory "~/src/gitlab"))
+      ("C-c l" . lazygitlab-map))
 
     (use-package lazygithub :ensure nil
-      :requires lazygit
+      :load-path "~/src/gitlab/tspub/lisp/lazygit"
       :bind-keymap
-      ("C-c h" . lazygithub-map)
-      :config
-      (setq lazygitlab-directory "~/src/github"))
+      ("C-c h" . lazygithub-map))
   #+end_src
 
 * Default Keybindings
