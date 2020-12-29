@@ -40,13 +40,21 @@
   For GitLab you can also clone or pull all the repositories under a given
   group with ~lazygitlab-clone-or-pull-group~.
 
-  ~lazygit-pull-all~ will search for all the git repos under ~$HOME~ on your
-  system and run ~git pull~ on them.
+  ~lazygit-pull-all~ will search for all the git repos under
+  ~lazygit-directory~ (defaults to ~$HOME~) on your system and run ~git pull~
+  on them.
 
-  ~lazygit-status-all~ will do the same but running ~git status~.
+  ~lazygit-status-all~ show you the ~git-status~ or all your local projects.
 
-  The results of all operations will appear in a new buffer with button links
-  to the repos that have been updated or have uncommitted changes, so you can
+  ~lazygitlab-status-all~ and ~lazygitlab-pull-all~ will do the same but just
+  for projects under ~lazygitab-directory~ and ~lazygithub-directory~
+  respectively.
+
+  The directory variables can be changed via the customize interface or with
+  ~setq~.
+
+  The output of all operations will appear in a new buffer with button links to
+  the repos that have been updated or have uncommitted changes, so you can
   quickly jump to the project directory.
 
 ** BONUS
