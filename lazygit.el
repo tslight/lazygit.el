@@ -266,7 +266,8 @@ Using PATH, NAME & URL."
   (mapc (lambda (directory)
           (lazygit-command directory command))
         (lazygit-repos-recursive directory maxdepth))
-  (message "Ran git %s on all repos %d deep under %s" command maxdepth directory))
+  (message "Ran git %s on all repos %d directories deep under %s"
+           command maxdepth directory))
 
 ;;;###autoload
 (defun lazygit-pull-all (arg &optional directory)
