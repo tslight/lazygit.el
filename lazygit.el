@@ -7,6 +7,8 @@
 ;; Copyright (C) 2020 Toby Slight
 ;; Author: Toby Slight tslight@pm.me
 ;; URL: https://github.com/tslight/lazygit.el
+;; Version: 0
+;; Package-Requires: ((emacs "24.4"))
 
 ;;; Code:
 (require 'auth-source)
@@ -146,13 +148,13 @@ Results will be pretty printed in a buffer."
     (message (string-trim (concat (process-name process) " " event)))))
 
 ;;;###autoload
-(defun find-file-button (button)
+(defun lazygit-find-file-button (button)
   "Find a file in BUTTON."
   (find-file (buffer-substring (button-start button) (button-end button))))
 ;; https://superuser.com/a/331896
-(define-button-type 'find-file-button
+(define-button-type 'lazygit-find-file-button
   'follow-link t
-  'action #'find-file-button)
+  'action #'lazygit-find-file-button)
 
 ;;;###autoload
 (defun lazygit-process-filter (proc string)
@@ -181,7 +183,7 @@ Results will be pretty printed in a buffer."
             (goto-char (process-mark proc))
             (insert (propertize timestamp
                                 'font-lock-face '(:foreground "cyan" :weight semibold)))
-            (insert-text-button directory :type 'find-file-button)
+            (insert-text-button directory :type 'lazygit-find-file-button)
             (insert "\n")
             (set-marker (process-mark proc) (point)))
           ;; Insert the text, advancing the process marker.
