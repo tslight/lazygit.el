@@ -25,7 +25,7 @@
 ;; Copyright (C) 2020 Toby Slight
 ;; Author: Toby Slight tslight@pm.me
 ;; URL: https://github.com/tslight/lazygit.el
-;; Package-Requires: ((emacs "27.1"))
+;; Package-Requires: ((Emacs "27"))
 
 ;;; Code:
 (require 'lazygit)

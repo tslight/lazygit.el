@@ -7,7 +7,7 @@
 ;; Copyright (C) 2020 Toby Slight
 ;; Author: Toby Slight tslight@pm.me
 ;; URL: https://github.com/tslight/lazygit.el
-;; Package-Requires: ((Emacs "27.1"))
+;; Package-Requires: ((Emacs "27"))
 
 ;;; Code:
 (require 'auth-source)
@@ -140,7 +140,7 @@ Results will be pretty printed in a buffer."
 (defun lazygit-process-filter (proc string)
   (when (and string
              (not (string-match-p ".*already up to date.*" (downcase string)))
-             (not (string-match-p "^remote: enumerating objects" (downcase string)))
+             (not (string-match-p "^remote\\:.*" (downcase string)))
              (not (string-match-p "^warning.*permanently added.*known hosts" (downcase string)))
              (not (string-match-p ".*[0-9]+%.*" (downcase string)))
              (buffer-live-p (process-buffer proc)))
