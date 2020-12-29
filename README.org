@@ -1,7 +1,6 @@
 #+TITLE: Emacs API Clients for GitHub & GitLab
 #+AUTHOR: Toby Slight
 #+STARTUP: overview
-(setq lazygitlab-directory "~/src")
 * Overview
 
   Ever setup up a new machine and just wanted to clone all your GitHub repos or
