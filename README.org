@@ -54,11 +54,37 @@
       :requires lazygit
       :bind-keymap
       ("C-c l" . lazygitlab-map)
+      :config
       (setq lazygitlab-directory "~/src/gitlab"))
 
     (use-package lazygithub :ensure nil
       :requires lazygit
       :bind-keymap
       ("C-c h" . lazygithub-map)
+      :config
       (setq lazygitlab-directory "~/src/github"))
+  #+end_src
+
+* Default Keybindings
+
+  #+begin_src text
+    C-c g p         lazygit-pull-all
+    C-c g s         lazygit-status-all
+  #+end_src
+
+  #+begin_src text
+    C-c l p         lazygitlab-pull-all
+    C-c l r         lazygitlab-retriever
+    C-c l s         lazygitlab-status-all
+    C-c l c a       lazygitlab-clone-or-pull-all
+    C-c l c g       lazygitlab-clone-or-pull-group
+    C-c l c p       lazygitlab-clone-or-pull-project
+  #+end_src
+
+  #+begin_src text
+    C-c h p         lazygithub-pull-all
+    C-c h r         lazygithub-retriever
+    C-c h s         lazygithub-status-all
+    C-c h c a       lazygithub-clone-or-pull-all
+    C-c h c r       lazygithub-clone-or-pull-repo
   #+end_src
