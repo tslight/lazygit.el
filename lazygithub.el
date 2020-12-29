@@ -38,9 +38,12 @@
   :type 'directory)
 
 ;;;###autoload
-(defvar lazygithub-baseurl "https://api.github.com/")
+(defvar lazygithub-baseurl "https://api.github.com/"
+  "GitHub API base URL.")
+
 ;;;###autoload
-(defvar lazygithub-attr "?per_page=100&page=1")
+(defvar lazygithub-attr "?per_page=100&page=1"
+  "GitHub API URL attributes.")
 
 ;;;###autoload
 (defun lazygithub-retriever (endpoint)
@@ -99,7 +102,7 @@ If `prefix' only look for git repos ARG deep.  Defaults to `lazygit-maxdepth'."
     (define-key map (kbd "r") 'lazygithub-retriever)
     (define-key map (kbd "s") 'lazygithub-status-all)
     map)
-  "Keymap for lazygithub commands.")
+  "Keymap for `lazygithub' commands.")
 (fset 'lazygithub-map lazygithub-map)
 
 (provide 'lazygithub)

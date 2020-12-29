@@ -41,9 +41,13 @@
   :type 'directory)
 
 ;;;###autoload
-(defvar lazygitlab-baseurl "https://gitlab.com/api/v4/")
+(defvar lazygitlab-baseurl "https://gitlab.com/api/v4/"
+  "GitLab API base URL.")
+
 ;;;###autoload
-(defvar lazygitlab-attr "?pagination=keyset&per_page=100&order_by=id&sort=asc&membership=true")
+(defvar lazygitlab-attr
+  "?pagination=keyset&per_page=100&order_by=id&sort=asc&membership=true"
+  "GitLab API URL attributes.")
 
 ;;;###autoload
 (defun lazygitlab-retriever (endpoint)
@@ -152,7 +156,7 @@ If `prefix' only look for git repos ARG deep.  Defaults to `lazygit-maxdepth'."
     (define-key map (kbd "r") 'lazygitlab-retriever)
     (define-key map (kbd "s") 'lazygitlab-status-all)
     map)
-  "Keymap for lazygitlab commands.")
+  "Keymap for `lazygitlab' commands.")
 (fset 'lazygitlab-map lazygitlab-map)
 
 (provide 'lazygitlab)

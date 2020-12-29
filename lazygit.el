@@ -266,6 +266,7 @@ Using PATH, NAME & URL."
         (setq current-directory-list (cdr current-directory-list))))
     (delete-dups git-repos)))
 
+;;;###autoload
 (defun lazygit-command-batch (directory command maxdepth)
   "Run git COMMAND in all sub-directories (to MAXDEPTH) of DIRECTORY."
   (lazygit-delete-buffer)
@@ -301,10 +302,9 @@ Defaults to `lazygit-maxdepth'."
     (define-key map (kbd "s") 'lazygit-status-all)
     (define-key map (kbd "p") 'lazygit-pull-all)
     map)
-  "Keymap for lazygit commands.")
+  "Keymap for `lazygit' commands.")
 (fset 'lazygit-map lazygit-map)
 
-;;;###autoload
 (provide 'lazygit)
 ;; Local Variables:
 ;; byte-compile-warnings: (not free-vars noruntime)
