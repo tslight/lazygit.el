@@ -109,7 +109,7 @@
                                  lazygitlab-directory
                                  'path_with_namespace
                                  'ssh_url_to_repo)
-    (message "Cloned or pulled all projects in %s" choice)))
+    (message "Cloned or pulled group to %s/%s" lazygitab-directory choice)))
 
 ;;;###autoload
 (defun lazygitlab-clone-or-pull-all ()
@@ -120,7 +120,8 @@
     (lazygit-clone-or-pull-batch projects
                                  lazygitlab-directory
                                  'path_with_namespace
-                                 'ssh_url_to_repo)))
+                                 'ssh_url_to_repo)
+    (message "Cloned or pulled all GitLab projects to %s" lazygitlab-directory)))
 
 ;;;###autoload
 (defun lazygitlab-pull-all (arg)

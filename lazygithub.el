@@ -68,7 +68,8 @@
   "Clone or pull ALL GitHub repositories to `lazygitlab-directory'."
   (interactive)
   (let ((repos (lazygithub-get-values "user/repos" (list 'full_name 'ssh_url))))
-    (lazygit-clone-or-pull-batch repos lazygithub-directory 'full_name 'ssh_url)))
+    (lazygit-clone-or-pull-batch repos lazygithub-directory 'full_name 'ssh_url)
+    (message "Cloned or pulled all GitHub projects to %s" lazygithub-directory)))
 
 ;;;###autoload
 (defun lazygithub-pull-all (arg)
