@@ -17,6 +17,8 @@
 (defgroup lazygit nil "LazyGit configuration." :group 'convenience)
 
 (defun lazygit-secret-from-authinfo (host)
+  "Retrieve API token for HOST from `authinfo' file.
+If there is nothing found for HOST prompt the user to enter one."
   (let* ((auth-source-creation-prompts '((secret . "Enter %h API token: ")))
          (save-function (plist-get
                          (car (auth-source-search
@@ -122,13 +124,14 @@ Results will be pretty printed in a buffer."
 
 ;;;###autoload
 (defun lazygit-process-sentinel (process event)
-  "Write output of PROCESS with EVENT."
+  "Write output of PROCESS with EVENT, after filtering."
   (when (and (memq (process-status process) '(exit signal))
              (not (equal event "finished\n")))
     (message (string-trim (concat (process-name process) " " event)))))
 
 ;;;###autoload
 (defun find-file-button (button)
+  "Find a file in BUTTON."
   (find-file (buffer-substring (button-start button) (button-end button))))
 ;; https://superuser.com/a/331896
 (define-button-type 'find-file-button
@@ -137,6 +140,7 @@ Results will be pretty printed in a buffer."
 
 ;;;###autoload
 (defun lazygit-process-filter (proc string)
+  "Filter the STRING produced by PROC."
   (when (and string
              (not (string-match-p ".*already up to date.*" (downcase string)))
              (not (string-match-p "^remote\\:.*" (downcase string)))
@@ -173,7 +177,7 @@ Results will be pretty printed in a buffer."
 
 ;;;###autoload
 (defun lazygit-async-shell-command (command directory)
-  "Run COMMAND asynchronously and output results to `minibuffer'."
+  "Run COMMAND with name as DIRECTORY, asynchronously."
   (let ((process (start-process-shell-command
                   (abbreviate-file-name directory)
                   "*lazygit*"
@@ -217,7 +221,7 @@ Using PATH, NAME & URL."
 
 ;;;###autoload
 (defun lazygit-command-batch (repos directory pathkey command)
-  "Run COMMAND pointing at DIRECTORY/PATHKEY."
+  "Run git COMMAND in DIRECTORY/PATHKEY for all REPOS."
   (mapc (lambda (r)
           (lazygit-command
            (concat directory "/" (cdr (assoc pathkey r))) command))
@@ -249,11 +253,14 @@ Using PATH, NAME & URL."
 
 ;;;###autoload
 (defun lazygit-delete-buffer ()
+  "Delete *lazygit* buffer, if it exists."
   (when (get-buffer "*lazygit*")
     (kill-buffer "*lazygit*")))
 
 ;;;###autoload
 (defun lazygit-pull-all ()
+  "Run git pull on all repos in user-home-directory.
+Output results to *lazygit* buffer."
   (interactive)
   (lazygit-delete-buffer)
   (mapc (lambda (directory)
@@ -263,6 +270,8 @@ Using PATH, NAME & URL."
 
 ;;;###autoload
 (defun lazygit-status-all ()
+  "Run git status on all repos in user-home-directory.
+Output results to *lazygit* buffer."
   (interactive)
   (lazygit-delete-buffer)
   (mapc (lambda (directory)

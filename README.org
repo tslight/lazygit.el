@@ -1,95 +1,99 @@
-* Emacs API Clients for GitHub & GitLab
+#+TITLE: Emacs API Clients for GitHub & GitLab
+#+AUTHOR: Toby Slight
+#+STARTUP: showall
+* Overview
 
-** Overview
+  A way to batch run Git operations on all local or just specific forge
+  repositories.
 
-So far I have implemented functions to clone or pull repositories from a list
-of repositories available to the authenticated user, with
-~lazygitlab-clone-or-pull-repo~ or ~lazygithub-clone-or-pull-repo~.
+  You can clone or pull all repositories in one fail swoop with
+  ~lazygithub-clone-or-pull-all~ or ~lazygitlab-clone-or-pull-all~.
 
-You can clone or pull all repositories in one fail swoop with
-~lazygithub-clone-or-pull-all~ or ~lazygitlab-clone-or-pull-all~.
+  You can interactively choose a single repository from any available to you on
+  a forge with either ~lazygitlab-clone-or-pull-project~ or
+  ~lazygithub-clone-or-pull-repo~.
 
-For GitLab you can also clone or pull all the repositories under a given group
-with ~lazygitlab-clone-or-pull-group~.
+  For GitLab you can also clone or pull all the repositories under a given
+  group with ~lazygitlab-clone-or-pull-group~.
 
-~lazygitlab-retriever~ and ~lazygithub-retriever~ allow arbitrary querying of
-endpoints. You can view the JSON results pretty printed in a dedicated buffer.
+  ~lazygit-pull-all~ will search for all the git repos under ~$HOME~ on your
+  system and run ~git pull~ on them.
 
-~lazygit-pull-all~ will search for all the git repos under ~$HOME~ on your
-system and run ~git pull~ on them. ~lazygit-status-all~ will do the same but
-running ~git status~. The results will appear in a new buffer with links to the
-repos that have been updated or have uncommitted changes.
+  ~lazygit-status-all~ will do the same but running ~git status~.
 
-*N.B.* /I have only tested this on Emacs 27 & 28... Feedback running on other
-versions greatly appreciated/
+  The results of all operations will appear in a new buffer with links to the
+  repos that have been updated or have uncommitted changes.
 
-** Authentication
+  ~lazygitlab-retriever~ and ~lazygithub-retriever~ allow arbitrary querying of
+  endpoints. You can view the JSON results pretty printed in a dedicated buffer.
 
-You will be asked to enter your /Personal Access Token/ the first time you run
-a command.
+* Authentication
 
-Generate a *GitHub* /Personal Access Token/ [[https://github.com/settings/tokens][here]].
+  You will be asked to enter your /Personal Access Token/ the first time you run
+  a command.
 
-Generate a *GitLab* /Personal Access Token/ [[https://gitlab.com/profile/personal_access_tokens][here]].
+  Generate a *GitHub* /Personal Access Token/ [[https://github.com/settings/tokens][here]].
 
-I'm using ~auth-source~ to retrieve and store this token in ~$HOME/.authinfo~
-or ~$HOME/.authinfo.gpg~.
+  Generate a *GitLab* /Personal Access Token/ [[https://gitlab.com/profile/personal_access_tokens][here]].
 
-** Configuration
+  I'm using ~auth-source~ to retrieve and store this token in ~$HOME/.authinfo~
+  or ~$HOME/.authinfo.gpg~.
 
-If you want GitHub access:
+* Configuration
 
-#+begin_src emacs-lisp
-  (add-to-list 'load-path (expand-file-name "~/src/gitlab/tspub/lisp/lazygit"))
+  To batch pull and view status locally
 
-  (with-eval-after-load 'lazygithub
-    (setq lazygit-directory (expand-file-name "~/src/github"))
-    (message "Lazy loaded lazygithub :-)"))
+  #+begin_src emacs-lisp
+    (require 'lazygit)
+    (global-set-key (kbd "C-c g h r") 'lazygit-status-all)
+    (global-set-key (kbd "C-c g h a") 'lazygit-pull-all)
+  #+end_src
 
-  (autoload 'lazygithub-clone-or-pull-repo "lazygithub" nil t)
-  (global-set-key (kbd "C-c g h r") 'lazygithub-clone-or-pull-repo)
-#+end_src
+  If you want GitHub access:
 
-If you want GitLab access:
+  #+begin_src emacs-lisp
+    (require 'lazygithub)
+    (setq lazygithub-directory (expand-file-name "~/github"))
+    (global-set-key (kbd "C-c g h r") 'lazygithub-clone-or-pull-repo)
+    (global-set-key (kbd "C-c g h a") 'lazygithub-clone-or-pull-all)
+  #+end_src
 
-#+begin_src emacs-lisp
-  (add-to-list 'load-path (expand-file-name "~/src/gitlab/tspub/lisp/lazygit"))
+  If you want GitLab access:
 
-  (with-eval-after-load 'lazygitlab
-    (setq lazygit-directory (expand-file-name "~/src/gitlab"))
-    (message "Lazy loaded lazygitlab :-)"))
+  #+begin_src emacs-lisp
+    (require 'lazygitlab)
+    (setq lazygithub-directory (expand-file-name "~/gitlab"))
+    (global-set-key (kbd "C-c g l p") 'lazygitlab-clone-or-pull-project)
+    (global-set-key (kbd "C-c g l g") 'lazygitlab-clone-or-pull-group)
+    (global-set-key (kbd "C-c g l a") 'lazygitlab-clone-or-pull-all)
+  #+end_src
 
-  (autoload 'lazygitlab-clone-or-pull-project "lazygitlab" nil t)
-  (global-set-key (kbd "C-c g l p") 'lazygitlab-clone-or-pull-project)
-#+end_src
+** Use Package
 
-*** Use Package
+   #+begin_src emacs-lisp
+     (use-package lazygit :load-path "/path/to/cloned/repo"
+       :bind
+       ("C-c g s" . lazygit-status-all)
+       ("C-c g p" . lazygit-pull-all))
+   #+end_src
 
-#+begin_src emacs-lisp
-  (use-package lazygit
-               :load-path "/path/to/cloned/repo")
+   #+begin_src emacs-lisp
+     (use-package lazygitlab
+       :after lazygit
+       :bind
+       ("C-c g l a" . lazygitlab-clone-or-pull-all)
+       ("C-c g l p" . lazygitlab-clone-or-pull-project)
+       ("C-c g l g" . lazygitlab-clone-or-pull-group)
+       :config
+       (setq lazygitlab-directory (expand-file-name "/gitlab/projects/destination"))
+   #+end_src
 
-  (use-package lazygitlab
-               :after lazygit
-               :bind
-               ("C-c g l a" . lazygitlab-clone-or-pull-all)
-               ("C-c g l c" . lazygitlab-clone-or-pull-project)
-               ("C-c g l g" . lazygitlab-clone-or-pull-group)
-               ("C-c g l r" . lazygitlab-retriever)
-               :config
-               (defalias 'gl/api 'lazygitlab-retriever)
-               (defalias 'gl/all 'lazygitlab-clone-or-pull-all)
-               (defalias 'gl/grp 'lazygitlab-clone-or-pull-group)
-               (defalias 'gl/repo 'lazygitlab-clone-or-pull-project))
-
-  (use-package lazygithub
-               :after lazygit
-               :bind
-               ("C-c g h a" . lazygithub-clone-or-pull-all)
-               ("C-c g h c" . lazygithub-clone-or-pull-repo)
-               ("C-c g h r" . lazygithub-retriever)
-               :config
-               (defalias 'gh/api 'lazygithub-retriever)
-               (defalias 'gh/all 'lazygithub-clone-or-pull-all)
-               (defalias 'gh/repo 'lazygithub-clone-or-pull-repo))
-#+end_src
+   #+begin_src emacs-lisp
+     (use-package lazygithub
+       :after lazygit
+       :bind
+       ("C-c g h a" . lazygithub-clone-or-pull-all)
+       ("C-c g h r" . lazygithub-clone-or-pull-repo)
+       :config
+       (setq lazygithub-directory (expand-file-name "/github/projects/destination"))
+   #+end_src
