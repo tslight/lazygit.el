@@ -64,6 +64,13 @@
                               'full_name 'name 'ssh_url lazygithub-directory))
 
 ;;;###autoload
+(defun lazygithub-clone-or-pull-all ()
+  "Clone or pull ALL GitHub repositories to `lazygitlab-directory'."
+  (interactive)
+  (let ((repos (lazygithub-get-values "user/repos" (list 'full_name 'ssh_url))))
+    (lazygit-clone-or-pull-batch repos lazygithub-directory 'full_name 'ssh_url)))
+
+;;;###autoload
 (defun lazygithub-pull-all (arg)
   "Git pull all projects in `lazygithub-directory'.
 If `prefix' only look for git repos ARG deep.  Defaults to `lazygit-maxdepth'."

@@ -4,6 +4,11 @@
 
 * Overview
 
+  Every setup up a new machine and just wanted to clone all your GitHub repos
+  quickly and easily from the comfort of Emacs? Lazygit to the rescue!
+
+  [[./img/clone.png]]
+
   A way to batch run Git operations on all local or just specific forge
   repositories.
 
@@ -47,12 +52,16 @@
       :load-path "~/src/gitlab/tspub/lisp/lazygit"
       :bind-keymap
       ("C-c g" . lazygit-map))
+  #+end_src
 
+  #+begin_src emacs-lisp
     (use-package lazygitlab :ensure nil
       :load-path "~/src/gitlab/tspub/lisp/lazygit"
       :bind-keymap
       ("C-c l" . lazygitlab-map))
+  #+end_src
 
+  #+begin_src emacs-lisp
     (use-package lazygithub :ensure nil
       :load-path "~/src/gitlab/tspub/lisp/lazygit"
       :bind-keymap
