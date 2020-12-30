@@ -1,18 +1,18 @@
 #+TITLE: Emacs GitHub & GitLab API Clients
 #+AUTHOR: Toby Slight
 
-Ever wanted to clone *ALL* of your GitHub repos or GitLab projects (or groups)
-quickly and easily from the comfort of Emacs?
+Ever wanted to clone *ALL* of your GitHub or GitLab repos quickly and easily
+from the comfort of Emacs?
 
 [[./img/clone.png]]
 
-Ever been multi-tasking like a mofo, in lots of different projects, and
-wondered how much work you hadn't committed to git yet?
+Ever been working in lots of different projects, and wondered how much work
+you'd forgotten to commit?
 
 [[./img/status.png]]
 
-Ever wished you could just quickly update *ALL* the Git repos on your machine in
-one fail swoop with an Emacs command?
+Ever wished you could quickly update *ALL* the git repos on your machine with
+an Emacs keystroke?
 
 [[./img/pull.png]]
 
