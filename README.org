@@ -67,7 +67,7 @@ trying to write automation tools targetting GitHub or GitLab's APIs...
 
   #+begin_src emacs-lisp
     (use-package lazygit :ensure nil
-      :load-path "~/src/gitlab/tspub/lisp/lazygit"
+      :load-path "~/path/to/lazygit"
       :bind-keymap
       ("C-c g" . lazygit-map)
       :config
@@ -76,7 +76,7 @@ trying to write automation tools targetting GitHub or GitLab's APIs...
 
   #+begin_src emacs-lisp
     (use-package lazygitlab :ensure nil
-      :load-path "~/src/gitlab/tspub/lisp/lazygit"
+      :load-path "~/path/to/lazygit"
       :bind-keymap
       ("C-c l" . lazygitlab-map)
       :config
@@ -85,7 +85,7 @@ trying to write automation tools targetting GitHub or GitLab's APIs...
 
   #+begin_src emacs-lisp
     (use-package lazygithub :ensure nil
-      :load-path "~/src/gitlab/tspub/lisp/lazygit"
+      :load-path "~/path/to/lazygit"
       :bind-keymap
       ("C-c h" . lazygithub-map)
       :config
