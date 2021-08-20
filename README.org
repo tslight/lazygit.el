@@ -1,0 +1,120 @@
+#+TITLE: Emacs GitHub & GitLab API Clients
+#+AUTHOR: Toby Slight
+
+Ever wanted to clone *ALL* of your GitHub or GitLab repos quickly and easily
+from the comfort of Emacs?
+
+[[./img/clone.png]]
+
+Ever been working in lots of different projects, and wondered how much work
+you'd forgotten to commit?
+
+[[./img/status.png]]
+
+Ever wished you could quickly update *ALL* the git repos on your machine with
+an Emacs keystroke?
+
+[[./img/pull.png]]
+
+~lazygit~ provides commands to batch run Git operations on all local or
+specific forge repositories.
+
+Clone or pull all repositories from GitHub or GitLab with
+~lazygithub-clone-or-pull-all~ or ~lazygitlab-clone-or-pull-all~
+
+Choose a single repository from any available to you on a forge with
+~lazygitlab-clone-or-pull-project~ or ~lazygithub-clone-or-pull-repo~
+
+For GitLab you can also clone or pull all the repositories under a given
+group with ~lazygitlab-clone-or-pull-group~.
+
+~lazygit-pull-all~ will search for all the git repos under
+~lazygit-directory~ (defaults to ~$HOME~) on your system and run ~git pull~
+on them.
+
+~lazygit-status-all~ show you the ~git-status~ or all your local projects.
+
+~lazygitlab-status-all~ and ~lazygitlab-pull-all~ will do the same but just
+for projects under ~lazygitab-directory~ and ~lazygithub-directory~
+respectively.
+
+The directory variables can be changed via the customize interface or with
+~setq~.
+
+The output of all operations will appear in a new buffer with button links to
+the repos that have been updated or have uncommitted changes, so you can
+quickly jump to the project directory.
+
+~lazygitlab-retriever~ and ~lazygithub-retriever~ allow arbitrary querying of
+endpoints. You can view the JSON results pretty printed in a dedicated buffer.
+
+This is pretty handy if you happen to be a frustrated DevOps/GitOps engineer
+trying to write automation tools targetting GitHub or GitLab's APIs...
+
+* Authentication
+
+  You will be asked to enter your /Personal Access Token/ the first time you run
+  a command.
+
+  Generate a *GitHub* /Personal Access Token/ [[https://github.com/settings/tokens][here]].
+
+  Generate a *GitLab* /Personal Access Token/ [[https://gitlab.com/profile/personal_access_tokens][here]].
+
+  I'm using ~auth-source~ to retrieve and store this token in ~$HOME/.authinfo~
+  or ~$HOME/.authinfo.gpg~.
+
+* Configuration
+
+  #+begin_src emacs-lisp
+    (use-package lazygit :ensure nil
+      :load-path "~/src/gitlab/tspub/lisp/lazygit"
+      :bind-keymap
+      ("C-c g" . lazygit-map)
+      :config
+      (setq lazygit-directory (expand-file-name "~/src")))
+  #+end_src
+
+  #+begin_src emacs-lisp
+    (use-package lazygitlab :ensure nil
+      :load-path "~/src/gitlab/tspub/lisp/lazygit"
+      :bind-keymap
+      ("C-c l" . lazygitlab-map)
+      :config
+      (setq lazygitlab-directory (expand-file-name "~/src/gitlab")))
+  #+end_src
+
+  #+begin_src emacs-lisp
+    (use-package lazygithub :ensure nil
+      :load-path "~/src/gitlab/tspub/lisp/lazygit"
+      :bind-keymap
+      ("C-c h" . lazygithub-map)
+      :config
+      (setq lazygithub-directory (expand-file-name "~/src/github")))
+  #+end_src
+
+* Default Keybindings
+
+  You will need bind these maps for them to be available, as I have done in the
+  ~use-package~ declaration above.
+
+  #+begin_src text
+    <lazygit-map> g p lazygit-pull-all
+    <lazygit-map> g s lazygit-status-all
+  #+end_src
+
+  #+begin_src text
+    <lazygitlab-map> p   lazygitlab-pull-all
+    <lazygitlab-map> r   lazygitlab-retriever
+    <lazygitlab-map> s   lazygitlab-status-all
+    <lazygitlab-map> c a lazygitlab-clone-or-pull-all
+    <lazygitlab-map> c g lazygitlab-clone-or-pull-group
+    <lazygitlab-map> c p lazygitlab-clone-or-pull-project
+  #+end_src
+
+  #+begin_src text
+    <lazygithub-map> p   lazygithub-pull-all
+    <lazygithub-map> r   lazygithub-retriever
+    <lazygithub-map> s   lazygithub-status-all
+    <lazygithub-map> c a lazygithub-clone-or-pull-all
+    <lazygithub-map> c r lazygithub-clone-or-pull-repo
+  #+end_src
