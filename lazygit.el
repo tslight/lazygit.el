@@ -228,7 +228,8 @@ Using PATH, NAME & URL."
          (repo (lazygit-get-assoc-list repos path choice))
          (cloneurl (cdr (assoc url repo)))
          (reponame (cdr (assoc name repo)))
-         (dest (concat directory "/" reponame)))
+         (pathname (cdr (assoc path repo)))
+         (dest (concat directory "/" pathname)))
     (lazygit-clone-or-pull dest cloneurl)))
 
 ;;;###autoload
