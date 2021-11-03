@@ -32,7 +32,7 @@
 (require 'lazygit)
 
 ;;;###autoload
-(defcustom lazygithub-directory (expand-file-name "~/src/github")
+(defcustom lazygithub-directory (expand-file-name "~/src")
   "File to store API Personal Access Tokens in."
   :group 'lazygit
   :type 'directory)
